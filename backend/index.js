@@ -9,6 +9,10 @@ connectMongo();
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("backend working properly");
+});
+
 app.post("/user", (req, res) => {
   const body = req.body;
   console.log(req.body);
