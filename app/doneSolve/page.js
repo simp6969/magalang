@@ -11,7 +11,7 @@ export default function Finish() {
   const [sign, setSign] = useState();
   useEffect(() => {
     setSign(getCookie("sign"));
-    fetch("http://localhost:8080/user/highscore", {
+    fetch("https://backend-one-lemon.vercel.app/user/highscore", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify({

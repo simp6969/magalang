@@ -36,7 +36,7 @@ export default function App() {
     } else if (data.password === undefined || data.password === "") {
       console.log("password requered");
     } else {
-      fetch("http://localhost:8080/user/" + data.username)
+      fetch("https://backend-one-lemon.vercel.app/user/" + data.username)
         .then((res) => res.json())
         .then((response) => handleLogin(response));
     }

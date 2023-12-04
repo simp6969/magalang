@@ -1,17 +1,92 @@
-//importuud
 "use client";
+
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { useCookies } from "react-cookie";
 import Image from "next/image";
 import { setCookie, getCookie } from "cookies-next";
+import { CheckSign } from "../components/CheckSign";
+
 //function importln
 export default function App() {
   //usestates
 
   const router = useRouter();
-  const [cookies, setCookies] = useCookies();
-  const [property, setProperty] = useState(shuffleArray(cookies.photo));
+  const [property, setProperty] = useState(
+    shuffleArray([
+      {
+        path: "/images/photo1.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo2.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo3.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo4.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo5.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo6.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo1.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo2.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo3.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo4.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo5.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo6.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+    ])
+  );
   const [click, setClick] = useState(1);
   const [fisrtClick, setFirstClick] = useState();
   const [moves, setMoves] = useState(0);
@@ -97,7 +172,6 @@ export default function App() {
     }
   }
 
-  //useeffect buyu useeffect
   useEffect(() => {
     const interval = setInterval(pollDOM, 1000);
     setSign(getCookie("sign"));
@@ -111,25 +185,7 @@ export default function App() {
 
   return (
     <div className="h-[100vh] w-[100vw] flex flex-col items-center justify-center gap-[10px]">
-      {sign ? (
-        <button
-          onClick={() => {
-            router.push("/account");
-          }}
-          className="absolute top-[8px] right-[16px] text-[25px] flex h-[50px] w-[100px] justify-center backdrop-blur-lg rounded-lg bg-[transparent] items-center hover:bg-[#696969] transition-all duration-300 border-[white] border-2"
-        >
-          {sign}
-        </button>
-      ) : (
-        <button
-          onClick={() => {
-            router.push("/login");
-          }}
-          className="absolute top-[8px] right-[16px] text-[25px] flex h-[50px] w-[100px] justify-center backdrop-blur-lg rounded-lg bg-[transparent] items-center hover:bg-[#696969] transition-all duration-300 border-[white] border-2"
-        >
-          login
-        </button>
-      )}
+      <CheckSign sign={sign} />
       <div className="p-[10px] flex flex-col h-[auto] w-[auto]  text-[white] gap-[10px] justify-center items-center backdrop-blur">
         <h2 className="text-[30px]">time: {displayTime}</h2>
 
@@ -137,14 +193,14 @@ export default function App() {
           {property.map((element, index) => {
             return (
               <div
-                key={index}
+                key={element?.id}
                 className="cards"
-                style={element.clicked ? { transform: "rotateY(180deg)" } : {}}
+                style={element?.clicked ? { transform: "rotateY(180deg)" } : {}}
                 onClick={() =>
                   handleCardClick(element.id, element.path, element.solved)
                 }
               >
-                {element.clicked ? (
+                {element?.clicked ? (
                   <Image
                     width={110}
                     height={140}
