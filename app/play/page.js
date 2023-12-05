@@ -1,17 +1,89 @@
-//importuud
 "use client";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
-import { useCookies } from "react-cookie";
-import Image from "next/image";
-import { setCookie, getCookie } from "cookies-next";
-//function importln
-export default function App() {
-  //usestates
 
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { getCookie } from "cookies-next";
+import { CheckSign } from "../components/CheckSign";
+import { CardContainer } from "../components/CardContainer";
+
+export default function App() {
   const router = useRouter();
-  const [cookies, setCookies] = useCookies();
-  const [property, setProperty] = useState(shuffleArray(cookies.photo));
+  const [property, setProperty] = useState(
+    shuffleArray([
+      {
+        path: "/images/photo1.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo2.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo3.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo4.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo5.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo6.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo1.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo2.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo3.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo4.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo5.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path: "/images/photo6.jpg",
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+    ])
+  );
   const [click, setClick] = useState(1);
   const [fisrtClick, setFirstClick] = useState();
   const [moves, setMoves] = useState(0);
@@ -20,15 +92,20 @@ export default function App() {
   const [solvedCards, setSolvedCards] = useState(0);
 
   function shuffleArray(array) {
-    const shuffledArray = [...array];
-    for (let i = shuffledArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledArray[i], shuffledArray[j]] = [
-        shuffledArray[j],
-        shuffledArray[i],
-      ];
-    }
-    return shuffledArray;
+    //old shuffle version
+    // const shuffledArray = [...array];
+    // for (let i = shuffledArray.length - 1; i > 0; i--) {
+    //   const j = Math.floor(Math.random() * (i + 1));
+    //   [shuffledArray[i], shuffledArray[j]] = [
+    //     shuffledArray[j],
+    //     shuffledArray[i],
+    //   ];
+    // }
+    // return shuffledArray;
+
+    //new version
+    const sorted = array.sort((a, b) => a.id - b.id);
+    return sorted;
   }
   function handleCardClick(id, path, solved) {
     setClick(click + 1);
@@ -75,9 +152,7 @@ export default function App() {
       }
     }
   }
-  function restart() {
-    router.push("/");
-  }
+
   let seconds = 0;
 
   function pollDOM() {
@@ -97,7 +172,6 @@ export default function App() {
     }
   }
 
-  //useeffect buyu useeffect
   useEffect(() => {
     const interval = setInterval(pollDOM, 1000);
     setSign(getCookie("sign"));
@@ -105,71 +179,21 @@ export default function App() {
       clearInterval(interval);
     };
   }, []);
+
   if (solvedCards === 6) {
     router.push("/doneSolve?time=" + displayTime);
   }
 
   return (
     <div className="h-[100vh] w-[100vw] flex flex-col items-center justify-center gap-[10px]">
-      {sign ? (
-        <button
-          onClick={() => {
-            router.push("/account");
-          }}
-          className="absolute top-[8px] right-[16px] text-[25px] flex h-[50px] w-[100px] justify-center backdrop-blur-lg rounded-lg bg-[transparent] items-center hover:bg-[#696969] transition-all duration-300 border-[white] border-2"
-        >
-          {sign}
-        </button>
-      ) : (
-        <button
-          onClick={() => {
-            router.push("/login");
-          }}
-          className="absolute top-[8px] right-[16px] text-[25px] flex h-[50px] w-[100px] justify-center backdrop-blur-lg rounded-lg bg-[transparent] items-center hover:bg-[#696969] transition-all duration-300 border-[white] border-2"
-        >
-          login
-        </button>
-      )}
+      <CheckSign sign={sign} />
       <div className="p-[10px] flex flex-col h-[auto] w-[auto]  text-[white] gap-[10px] justify-center items-center backdrop-blur">
         <h2 className="text-[30px]">time: {displayTime}</h2>
 
-        <div className="card_container">
-          {property.map((element, index) => {
-            return (
-              <div
-                key={index}
-                className="cards"
-                style={element.clicked ? { transform: "rotateY(180deg)" } : {}}
-                onClick={() =>
-                  handleCardClick(element.id, element.path, element.solved)
-                }
-              >
-                {element.clicked ? (
-                  <Image
-                    width={110}
-                    height={140}
-                    draggable={false}
-                    alt={index}
-                    src={element.path}
-                    className="rounded-[10px]"
-                  />
-                ) : (
-                  <Image
-                    className="rounded-[10px]"
-                    width={110}
-                    height={140}
-                    draggable={false}
-                    alt={index}
-                    src="/images/blank.webp"
-                  />
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <CardContainer property={property} handleCardClick={handleCardClick} />
 
         <button
-          onClick={restart}
+          onClick={() => router.push("/")}
           className="border-white border-2 rounded-xl p-[10px] hover:bg-[#3d3d3d] transition-all duration-300"
         >
           Return main menu
