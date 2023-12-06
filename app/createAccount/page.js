@@ -34,7 +34,7 @@ export default function App() {
     } else if (data.lastname === undefined || data.lastname === "") {
       console.log("lastname requered");
     } else {
-      fetch("https://backend-one-lemon.vercel.app/user", {
+      fetch("http://localhost:8080/user", {
         method: "POST",
         body: JSON.stringify(data),
         headers: {

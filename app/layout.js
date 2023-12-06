@@ -12,7 +12,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <link rel="preload" href="./images/blank.webp" as="image" />
+        <link
+          rel="prefetch"
+          href="./images/blank.webp"
+          as="image"
+          crossOrigin="anonymous"
+        ></link>
       </head>
       <body className={inter.className}>{children}</body>
     </html>

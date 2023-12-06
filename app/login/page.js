@@ -20,30 +20,30 @@ export default function App() {
   }
   function handleLogin(res) {
     if (res.length === 0) {
-      console.log("zl");
+      setData({ ...data, isWrong: true });
     } else if (res[0].username === data.username) {
       if (res[0].password === data.password) {
         setCookie("sign", data.username);
         router.push("/play?username=" + data.username);
       } else {
-        console.log("zl");
+        setData({ ...data, isWrong: true });
       }
     }
   }
   function handleSubmit() {
     if (data.username === undefined || data.username === "") {
-      console.log("username requered");
+      setData({ ...data, req_user: true });
     } else if (data.password === undefined || data.password === "") {
-      console.log("password requered");
+      setData({ ...data, req_pass: true });
     } else {
-      fetch("https://backend-one-lemon.vercel.app/user/" + data.username)
+      fetch("http://localhost:8080/user/" + data.username)
         .then((res) => res.json())
         .then((response) => handleLogin(response));
     }
   }
   return (
     <div className="flex justify-center items-center h-[100vh] w-[100vw]">
-      <div className="backdrop-blur-lg flex flex-col gap-[25px] w-[90%] h-[45%] justify-center min-[500px]:w-[400px] min-[500px]:h-[30%] items-center rounded-[30px]">
+      <div className="backdrop-blur-lg flex flex-col gap-[25px] w-[90%] justify-center min-[500px]:w-[400px] min-[500px]:h-[35%] items-center rounded-[30px]">
         <h1 className="text-[25px]">Login</h1>
         <input
           spellCheck={false}
@@ -51,6 +51,11 @@ export default function App() {
           className="bg-[transparent] px-[10px] py-[5px] border-white border-2 rounded-md "
           placeholder="username"
         />
+        {data?.isWrong ? (
+          <h1 className="text-[red]">wrong password or username</h1>
+        ) : null}
+        {data.req_user ? <h1>username required</h1> : null}
+        {data.req_pass ? <h1>password required</h1> : null}
         <input
           spellCheck={false}
           onChange={handlePassword}

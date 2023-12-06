@@ -1,15 +1,12 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import Image from "next/image";
-import { setCookie, getCookie } from "cookies-next";
+import { getCookie } from "cookies-next";
 import { CheckSign } from "../components/CheckSign";
+import { CardContainer } from "../components/CardContainer";
 
-//function importln
 export default function App() {
-  //usestates
-
   const router = useRouter();
   const [property, setProperty] = useState(
     shuffleArray([
@@ -95,15 +92,20 @@ export default function App() {
   const [solvedCards, setSolvedCards] = useState(0);
 
   function shuffleArray(array) {
-    const shuffledArray = [...array];
-    for (let i = shuffledArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledArray[i], shuffledArray[j]] = [
-        shuffledArray[j],
-        shuffledArray[i],
-      ];
-    }
-    return shuffledArray;
+    //old shuffle version
+    // const shuffledArray = [...array];
+    // for (let i = shuffledArray.length - 1; i > 0; i--) {
+    //   const j = Math.floor(Math.random() * (i + 1));
+    //   [shuffledArray[i], shuffledArray[j]] = [
+    //     shuffledArray[j],
+    //     shuffledArray[i],
+    //   ];
+    // }
+    // return shuffledArray;
+
+    //new version
+    const sorted = array.sort((a, b) => a.id - b.id);
+    return sorted;
   }
   function handleCardClick(id, path, solved) {
     setClick(click + 1);
@@ -150,9 +152,7 @@ export default function App() {
       }
     }
   }
-  function restart() {
-    router.push("/");
-  }
+
   let seconds = 0;
 
   function pollDOM() {
@@ -179,6 +179,7 @@ export default function App() {
       clearInterval(interval);
     };
   }, []);
+
   if (solvedCards === 6) {
     router.push("/doneSolve?time=" + displayTime);
   }
@@ -189,43 +190,10 @@ export default function App() {
       <div className="p-[10px] flex flex-col h-[auto] w-[auto]  text-[white] gap-[10px] justify-center items-center backdrop-blur">
         <h2 className="text-[30px]">time: {displayTime}</h2>
 
-        <div className="card_container">
-          {property.map((element, index) => {
-            return (
-              <div
-                key={element?.id}
-                className="cards"
-                style={element?.clicked ? { transform: "rotateY(180deg)" } : {}}
-                onClick={() =>
-                  handleCardClick(element.id, element.path, element.solved)
-                }
-              >
-                {element?.clicked ? (
-                  <Image
-                    width={110}
-                    height={140}
-                    draggable={false}
-                    alt={index}
-                    src={element.path}
-                    className="rounded-[10px]"
-                  />
-                ) : (
-                  <Image
-                    className="rounded-[10px]"
-                    width={110}
-                    height={140}
-                    draggable={false}
-                    alt={index}
-                    src="/images/blank.webp"
-                  />
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <CardContainer property={property} handleCardClick={handleCardClick} />
 
         <button
-          onClick={restart}
+          onClick={() => router.push("/")}
           className="border-white border-2 rounded-xl p-[10px] hover:bg-[#3d3d3d] transition-all duration-300"
         >
           Return main menu

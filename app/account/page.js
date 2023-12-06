@@ -1,6 +1,6 @@
 "use client";
 
-import { setCookie, getCookie } from "cookies-next";
+import { getCookie, deleteCookie } from "cookies-next";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 export default function App() {
@@ -26,7 +26,7 @@ export default function App() {
   }
   return (
     <div className=" flex text-[25px] justify-center gap-[10px] items-center p-[20px] h-[100vh] w-[100vw] flex-col">
-      <div className="max-[800px]:w-[90%] w-[500px] backdrop-blur-xl h-[500px] flex flex-col gap-[10px] p-[20px] items-center rounded-[10px]">
+      <div className="max-[800px]:w-[90%] max-[800px]:h-[60%] w-[500px] backdrop-blur-xl h-[500px] flex flex-col gap-[10px] p-[20px] items-center rounded-[10px]">
         <h1>{filt[0].username}</h1>
         <h1>high score: {filt[0].highscore}</h1>
         <h1>global rank:</h1>
@@ -56,6 +56,15 @@ export default function App() {
         onClick={() => router.push("/")}
       >
         Main Menu
+      </button>
+      <button
+        className="absolute bottom-20 bg-[transparent] h-[auto] w-[auto] p-[10px] border-white border-2 rounded-md"
+        onClick={() => {
+          deleteCookie("sign");
+          router.push("/");
+        }}
+      >
+        log out
       </button>
     </div>
   );
