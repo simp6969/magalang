@@ -7,7 +7,7 @@ export default function App() {
   const [userdata, setUserData] = useState([]);
   const router = useRouter();
   function get() {
-    fetch("http://localhost:8080/users/highscore")
+    fetch("http://https://backend-one-lemon.vercel.app/users/highscore")
       .then((res) => res.json())
       .then((response) => setUserData(response.userData));
   }

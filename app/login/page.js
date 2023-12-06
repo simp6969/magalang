@@ -36,7 +36,7 @@ export default function App() {
     } else if (data.password === undefined || data.password === "") {
       setData({ ...data, req_pass: true });
     } else {
-      fetch("http://localhost:8080/user/" + data.username)
+      fetch("http://https://backend-one-lemon.vercel.app/user/" + data.username)
         .then((res) => res.json())
         .then((response) => handleLogin(response));
     }
