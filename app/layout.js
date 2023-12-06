@@ -12,6 +12,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <title>magalang</title>
         <link
           rel="prefetch"
           href="./images/blank.webp"
