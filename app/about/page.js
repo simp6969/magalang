@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { setCookie, getCookie } from "cookies-next";
+import { getCookie } from "cookies-next";
 import { CheckSign } from "../components/CheckSign";
 
 export default function App() {

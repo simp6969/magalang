@@ -11,7 +11,7 @@ export default function Finish() {
   const [data, setData] = useState();
   useEffect(() => {
     setData({ ...data, sign: getCookie("sign") });
-    fetch("http://https://backend-one-lemon.vercel.app/user/highscore", {
+    fetch("https://backend-one-lemon.vercel.app/user/highscore", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify({
@@ -19,7 +19,7 @@ export default function Finish() {
         highscore: params.get("time"),
       }),
     });
-    fetch("http://https://backend-one-lemon.vercel.app/users/highscore")
+    fetch("https://backend-one-lemon.vercel.app/users/highscore")
       .then((res) => res.json())
       .then((response) => setData({ ...data, rank: response.userData }));
   }, []);

@@ -84,33 +84,19 @@ export default function App() {
       },
     ])
   );
-  const [click, setClick] = useState(1);
   const [fisrtClick, setFirstClick] = useState();
-  const [moves, setMoves] = useState(0);
   const [displayTime, setDisplayTime] = useState(0);
   const [sign, setSign] = useState();
   const [solvedCards, setSolvedCards] = useState(0);
+  const [data, setData] = useState({ fisrtClick: 0, click: 1 });
 
   function shuffleArray(array) {
-    //old shuffle version
-    // const shuffledArray = [...array];
-    // for (let i = shuffledArray.length - 1; i > 0; i--) {
-    //   const j = Math.floor(Math.random() * (i + 1));
-    //   [shuffledArray[i], shuffledArray[j]] = [
-    //     shuffledArray[j],
-    //     shuffledArray[i],
-    //   ];
-    // }
-    // return shuffledArray;
-
-    //new version
     const sorted = array.sort((a, b) => a.id - b.id);
     return sorted;
   }
   function handleCardClick(id, path, solved) {
-    setClick(click + 1);
-    setMoves(moves + 1);
-
+    // setClick(click + 1);
+    setData({ ...data, click: data.click + 1 });
     const updatedProperty = property.map((card) => {
       if (card.id === id) {
         return { ...card, clicked: true };
@@ -120,15 +106,21 @@ export default function App() {
 
     setProperty(updatedProperty);
 
-    if (click === 1) {
+    if (data.click === 1) {
       setFirstClick({ id, path, solved });
+      // setData({ ...data, fisrtClick: { id, path, solved } });
+
       if (solved) {
         console.log("thts solved card");
-        setClick(1);
+        // setClick(1);
+        setData({ ...data, click: 1 });
+
         return { id: id, path: path, solved: true, clicked: true };
       }
-    } else if (click === 2) {
-      setClick(1);
+    } else if (data.click === 2) {
+      // setClick(1);
+      setData({ ...data, click: 1 });
+
       //what in the holy world is this mess
       if (fisrtClick.path === path && fisrtClick.id !== id) {
         const updatedProperty = property.map((card) => {
@@ -183,7 +175,6 @@ export default function App() {
   if (solvedCards === 6) {
     router.push("/doneSolve?time=" + displayTime);
   }
-
   return (
     <div className="h-[100vh] w-[100vw] flex flex-col items-center justify-center gap-[10px]">
       <CheckSign sign={sign} />
