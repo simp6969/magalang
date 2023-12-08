@@ -11,6 +11,7 @@ export default function App() {
       .then((res) => res.json())
       .then((response) => setUserData(response.userData));
   }
+
   useEffect(() => {
     get();
   }, []);
@@ -20,15 +21,14 @@ export default function App() {
   userdata.sort((s1, s2) => {
     return s1.highscore - s2.highscore;
   });
-
   if (userdata.length === 0) {
     return <div>loading....</div>;
   }
   return (
     <div className=" flex text-[25px] justify-center gap-[10px] items-center p-[20px] h-[100vh] w-[100vw] flex-col">
       <div className="max-[800px]:w-[90%] max-[800px]:h-[60%] w-[500px] backdrop-blur-xl h-[500px] flex flex-col gap-[10px] p-[20px] items-center rounded-[10px]">
-        <h1>{filt[0].username}</h1>
-        <h1>high score: {filt[0].highscore}</h1>
+        <h1>{filt.username}</h1>
+        <h1>high score: {filt.highscore}</h1>
         <h1>global rank:</h1>
         <div className="flex justify-space gap-[13px] text-[16px] ">
           <h1>place</h1>

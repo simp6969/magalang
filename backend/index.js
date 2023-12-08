@@ -48,6 +48,9 @@ app.get("/users/highscore", async (req, res) => {
 });
 
 app.post("/user/highscore", async (req, res) => {
+  if (req.body.username === undefined || req.body.username === "") {
+    res.send("zl");
+  }
   const model = {
     username: req.body.username,
     highscore: req.body.highscore,
