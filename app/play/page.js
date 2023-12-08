@@ -5,90 +5,17 @@ import { useState, useEffect } from "react";
 import { getCookie } from "cookies-next";
 import { CheckSign } from "../components/CheckSign";
 import { CardContainer } from "../components/CardContainer";
+import { Data } from "../components/Data";
 
 export default function App() {
   const router = useRouter();
-  const [property, setProperty] = useState(
-    shuffleArray([
-      {
-        path: "/images/photo1.jpg",
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path: "/images/photo2.jpg",
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path: "/images/photo3.jpg",
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path: "/images/photo4.jpg",
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path: "/images/photo5.jpg",
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path: "/images/photo6.jpg",
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path: "/images/photo1.jpg",
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path: "/images/photo2.jpg",
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path: "/images/photo3.jpg",
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path: "/images/photo4.jpg",
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path: "/images/photo5.jpg",
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path: "/images/photo6.jpg",
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-    ])
-  );
+  const [property, setProperty] = useState(shuffleArray(Data));
   const [fisrtClick, setFirstClick] = useState();
   const [displayTime, setDisplayTime] = useState(0);
   const [sign, setSign] = useState();
   const [solvedCards, setSolvedCards] = useState(0);
   const [data, setData] = useState({ fisrtClick: 0, click: 1 });
+  let seconds = 0;
 
   function shuffleArray(array) {
     const sorted = array.sort((a, b) => a.id - b.id);
@@ -144,8 +71,6 @@ export default function App() {
       }
     }
   }
-
-  let seconds = 0;
 
   function pollDOM() {
     seconds++;
