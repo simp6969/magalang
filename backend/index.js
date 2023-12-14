@@ -81,20 +81,6 @@ app.post("/user/highscore", async (req, res) => {
   res.send(hasDupe());
 });
 
-app.post("/photos", async (req, res) => {
-  const body = req.body;
-  const model = body.map((element) => {
-    return {
-      path: element.path,
-      clicked: element.clicked,
-      id: element.id,
-      solved: element.solved,
-    };
-  });
-  await userModel.PhotoModel.create(model);
-  res.json(body);
-});
-
 app.listen(8080);
 // [
 //     {

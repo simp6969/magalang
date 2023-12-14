@@ -7,20 +7,12 @@ const UserSchema = new Schema({
   lastname: String,
 });
 
-const PhotoSchema = new Schema({
-  path: String,
-  click: String,
-  id: Number,
-  solved: String,
-});
-
 const ScoreSchema = new Schema({
   username: String,
   highscore: String,
 });
 
-const PhotoModel = model("photos", PhotoSchema);
 const UserModel = model("users", UserSchema);
 const ScoreModel = model("score", ScoreSchema);
 
-module.exports = { UserModel, ScoreModel, PhotoModel };
+module.exports = { UserModel, ScoreModel };

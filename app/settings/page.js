@@ -18,11 +18,9 @@ export default function App() {
     setClickedPhoto(id);
   }
   function handleFile(event) {
-    console.log(event);
     var fileReader = new FileReader();
     fileReader.onload = function (fileLoadedEvent) {
       var srcData = fileLoadedEvent.target.result;
-      console.log(srcData);
       const index = baseData.filter((element) => {
         if (element.id === clickedPhoto) {
           element.path = srcData;
@@ -100,13 +98,18 @@ export default function App() {
         solved: false,
       },
     ];
-    fetch("http://localhost:8080/photos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(customData),
-    })
-      .then((res) => res.json())
-      .then((element) => console.log(element));
+    const urlFriendly = customData.map((element) => {
+      return (
+        element.path.replace(/\+/g, "-"),
+        element.path.replace(/\//g, "_"),
+        element.path.replace(/\=+$/, "")
+      );
+    });
+    const size = new TextEncoder().encode(JSON.stringify(urlFriendly)).length;
+    const kiloBytes = size / 1024;
+    const megaBytes = kiloBytes / 1024;
+    // const solution = urlFriendly.replace(/-/g, "+").replace(/_/g, "/");
+    console.log("size ", megaBytes);
   }
   return (
     <div className="flex h-[100vh] w-[100vw] justify-center flex-col items-center gap-5">
