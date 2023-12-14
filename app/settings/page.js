@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Data } from "../components/Data";
 import Image from "next/image";
+import { setCookie } from "cookies-next";
 
 export default function App() {
   const [clickedPhoto, setClickedPhoto] = useState();
@@ -28,6 +29,9 @@ export default function App() {
           return element;
         }
       });
+      const arr = [...baseData, index];
+      arr.pop();
+      setBaseData(arr);
     };
     try {
       fileReader.readAsDataURL(event.target.files[0]);
@@ -35,19 +39,90 @@ export default function App() {
       console.log("return by death");
     }
   }
+  function handleSave() {
+    const customData = [
+      {
+        path:
+          baseData[0].path === "/images/photo1.jpg"
+            ? "/images/photo1.jpg"
+            : baseData[0].path,
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path:
+          baseData[1].path === "/images/photo2.jpg"
+            ? "/images/photo2.jpg"
+            : baseData[1].path,
+
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path:
+          baseData[2].path === "/images/photo3.jpg"
+            ? "/images/photo3.jpg"
+            : baseData[2].path,
+
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path:
+          baseData[3].path === "/images/photo4.jpg"
+            ? "/images/photo4.jpg"
+            : baseData[3].path,
+
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path:
+          baseData[4].path === "/images/photo5.jpg"
+            ? "/images/photo5.jpg"
+            : baseData[4].path,
+
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+      {
+        path:
+          baseData[5].path === "/images/photo6.jpg"
+            ? "/images/photo6.jpg"
+            : baseData[5].path,
+        clicked: true,
+        id: Math.floor(Math.random() * 100000),
+        solved: false,
+      },
+    ];
+    fetch("http://localhost:8080/photos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(customData),
+    })
+      .then((res) => res.json())
+      .then((element) => console.log(element));
+  }
   return (
-    <div className="flex h-[100vh] w-[100vw] justify-center flex-col items-center">
+    <div className="flex h-[100vh] w-[100vw] justify-center flex-col items-center gap-5">
       <h1>editing photo</h1>
-      <div className="flex">
+      <div className="flex gap-5">
         {baseData.map((element, index) => {
           return (
-            <div className="h-[300px] gap-[10px] p-[5px] flex" key={index}>
+            <div
+              className="flex h-[200px] w-[114px] rounded-lg border-2 border-white gap-[10px] "
+              key={index}
+            >
               <Image
                 alt="phots"
-                width="0"
-                height="0"
-                sizes="100vw"
-                className="w-full h-auto"
+                className="rounded-[10px]"
+                width={110}
+                height={140}
                 src={element.path}
                 onClick={() => handleClick(element.id)}
               ></Image>
@@ -61,6 +136,12 @@ export default function App() {
           onChange={handleFile}
         ></input>
       </div>
+      <button
+        onClick={handleSave}
+        className="border-2 rounded-[10px] p-[10px] hover:bg-[#696969] transition-all duration-300"
+      >
+        save
+      </button>
     </div>
   );
 }

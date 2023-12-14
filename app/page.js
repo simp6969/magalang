@@ -1,15 +1,16 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { setCookie, getCookie } from "cookies-next";
+import { getCookie } from "cookies-next";
 import { useEffect, useState } from "react";
 import { CheckSign } from "./components/CheckSign";
+import { Data } from "./components/Data";
 export default function App() {
   const router = useRouter();
   const [sign, setSign] = useState();
   useEffect(() => {
     setSign(getCookie("sign"));
+    console.log(Data);
   }, []);
-  const setPhotoCookie = setCookie("photo");
   return (
     <div className="flex justify-center items-center h-[100vh] w-[100vw] relative">
       <CheckSign sign={sign} />
@@ -18,7 +19,6 @@ export default function App() {
         <div className="flex gap-[10px]">
           <button
             onClick={() => {
-              setPhotoCookie;
               router.push("/play");
             }}
             className="border-2 border-white px-[15px] rounded-[10px] py-[5px]  transition-all duration-300 hover:bg-[#3d3d3d]"
