@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { Data } from "../components/Data";
 import Image from "next/image";
-import { setCookie } from "cookies-next";
-
+import imageCompression from "browser-image-compression";
 export default function App() {
   const [clickedPhoto, setClickedPhoto] = useState();
   const [baseData, setBaseData] = useState(() => {
@@ -17,7 +16,10 @@ export default function App() {
     document.getElementById("input").click();
     setClickedPhoto(id);
   }
-  function handleFile(event) {
+  async function handleFile(event) {
+    const imageFile = event.target.files[0];
+    console.log("originalFile instanceof Blob", imageFile instanceof Blob); // true
+    console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
     var fileReader = new FileReader();
     fileReader.onload = function (fileLoadedEvent) {
       var srcData = fileLoadedEvent.target.result;
@@ -31,10 +33,16 @@ export default function App() {
       arr.pop();
       setBaseData(arr);
     };
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
     try {
-      fileReader.readAsDataURL(event.target.files[0]);
-    } catch {
-      console.log("return by death");
+      const compressedFile = await imageCompression(imageFile, options);
+      fileReader.readAsDataURL(compressedFile);
+    } catch (error) {
+      console.log(error);
     }
   }
   function handleSave() {
@@ -105,11 +113,16 @@ export default function App() {
         element.path.replace(/\=+$/, "")
       );
     });
-    const size = new TextEncoder().encode(JSON.stringify(urlFriendly)).length;
-    const kiloBytes = size / 1024;
-    const megaBytes = kiloBytes / 1024;
+    // const size = new TextEncoder().encode(JSON.stringify(urlFriendly)).length;
+    // const kiloBytes = size / 1024;
+    // const megaBytes = kiloBytes / 1024;
     // const solution = urlFriendly.replace(/-/g, "+").replace(/_/g, "/");
-    console.log("size ", megaBytes);
+    // console.log("size ", megaBytes);
+    console.log(urlFriendly);
+    fetch("http://localhost:8080/photo", {
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify([]),
+    });
   }
   return (
     <div className="flex h-[100vh] w-[100vw] justify-center flex-col items-center gap-5">

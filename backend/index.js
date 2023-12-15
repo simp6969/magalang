@@ -81,6 +81,15 @@ app.post("/user/highscore", async (req, res) => {
   res.send(hasDupe());
 });
 
+app.post("/user/photo", (req, res) => {
+  const body = req.body;
+  userModel.PhotoModel.create({
+    base64: body.base64,
+    username: body.username,
+  });
+  console.log(body);
+});
+
 app.listen(8080);
 // [
 //     {

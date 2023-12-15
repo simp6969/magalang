@@ -16,7 +16,6 @@ export default function App() {
   const [solvedCards, setSolvedCards] = useState(0);
   const [data, setData] = useState({ fisrtClick: 0, click: 1 });
   let seconds = 0;
-
   function shuffleArray(array) {
     const sorted = array.sort((a, b) => a.id - b.id);
     return sorted;

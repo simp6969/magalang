@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@kinde-oss/kinde-auth-react": "^3.0.23",
+    "@uppy/compressor": "^1.0.5",
+    "browser-image-compression": "^2.0.2",
     "cookies-next": "^4.1.0",
     "create-next-app": "^14.0.3",
     "dotenv": "^16.3.1",
