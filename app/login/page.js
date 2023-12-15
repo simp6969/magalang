@@ -30,6 +30,7 @@ export default function App() {
       }
     }
   }
+
   function handleSubmit() {
     if (data.username === undefined || data.username === "") {
       setData({ ...data, req_user: true });

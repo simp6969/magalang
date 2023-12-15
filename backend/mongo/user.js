@@ -12,7 +12,13 @@ const ScoreSchema = new Schema({
   highscore: String,
 });
 
+const PhotoSchema = new Schema({
+  base64: String,
+  username: String,
+});
+
+const PhotoModel = model("photo", PhotoSchema);
 const UserModel = model("users", UserSchema);
 const ScoreModel = model("score", ScoreSchema);
 
-module.exports = { UserModel, ScoreModel };
+module.exports = { UserModel, ScoreModel, PhotoModel };
