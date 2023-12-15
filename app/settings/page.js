@@ -122,7 +122,7 @@ export default function App() {
               key={index}
             >
               <Image
-                alt="phots"
+                alt={`phots-${index}`}
                 className="rounded-[10px]"
                 width={110}
                 height={140}
