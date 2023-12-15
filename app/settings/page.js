@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Data } from "../components/Data";
 import Image from "next/image";
 import imageCompression from "browser-image-compression";
+import { getCookie } from "cookies-next";
+
 export default function App() {
   const [clickedPhoto, setClickedPhoto] = useState();
   const [baseData, setBaseData] = useState(() => {
@@ -113,16 +115,28 @@ export default function App() {
         element.path.replace(/\=+$/, "")
       );
     });
-    // const size = new TextEncoder().encode(JSON.stringify(urlFriendly)).length;
-    // const kiloBytes = size / 1024;
-    // const megaBytes = kiloBytes / 1024;
-    // const solution = urlFriendly.replace(/-/g, "+").replace(/_/g, "/");
-    // console.log("size ", megaBytes);
-    console.log(urlFriendly);
-    fetch("http://localhost:8080/photo", {
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify([]),
-    });
+    const size = new TextEncoder().encode(JSON.stringify(urlFriendly)).length;
+    const kiloBytes = size / 1024;
+    const megaBytes = kiloBytes / 1024;
+    const solution = urlFriendly.map((element) =>
+      element.replace(/-/g, "+").replace(/_/g, "/")
+    );
+    console.log("before", kiloBytes);
+    const sizeOfAfter = new TextEncoder().encode(
+      JSON.stringify(solution)
+    ).length;
+    const kil = sizeOfAfter / 1024;
+    console.log("after", kil);
+    // fetch("http://localhost:8080/user/photo", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({
+    //     base64: urlFriendly,
+    //     username: getCookie("sign"),
+    //   }),
+    // })
+    //   .then((res) => res.json())
+    //   .then((element) => console.log(element));
   }
   return (
     <div className="flex h-[100vh] w-[100vw] justify-center flex-col items-center gap-5">
