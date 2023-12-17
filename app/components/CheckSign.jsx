@@ -6,6 +6,7 @@ export function CheckSign(props) {
     <div>
       <button
         onClick={() => router.push("/settings")}
+        style={props.sign ? { display: "flex" } : { display: "none" }}
         className="absolute top-[8px] right-[120px] text-[25px] flex h-[50px] w-[100px] justify-center backdrop-blur-lg rounded-lg bg-[transparent] items-center "
       >
         <svg

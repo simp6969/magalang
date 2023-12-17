@@ -2,7 +2,6 @@ const connectMongo = require("./mongo/mongodb.js");
 const express = require("express");
 const cors = require("cors");
 const userModel = require("./mongo/user.js");
-
 const app = express();
 
 connectMongo();
@@ -15,7 +14,6 @@ app.get("/", (req, res) => {
 
 app.post("/user", (req, res) => {
   const body = req.body;
-  console.log(req.body);
   const model = {
     username: body.username,
     password: body.password,
@@ -83,11 +81,12 @@ app.post("/user/highscore", async (req, res) => {
 
 app.post("/user/photo", (req, res) => {
   const body = req.body;
-  userModel.PhotoModel.create({
+  const model = {
     base64: body.base64,
     username: body.username,
-  });
-  console.log(body);
+  };
+  userModel.PhotoModel.create(model);
+  res.json(model);
 });
 
 app.listen(8080);

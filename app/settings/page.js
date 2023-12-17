@@ -1,9 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Data } from "../components/Data";
-import Image from "next/image";
-import imageCompression from "browser-image-compression";
 import { getCookie } from "cookies-next";
 
 export default function App() {
@@ -14,148 +13,128 @@ export default function App() {
     });
     return unique;
   });
+  const router = useRouter();
   function handleClick(id) {
     document.getElementById("input").click();
     setClickedPhoto(id);
   }
   async function handleFile(event) {
-    const imageFile = event.target.files[0];
-    console.log("originalFile instanceof Blob", imageFile instanceof Blob); // true
-    console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
-    var fileReader = new FileReader();
-    fileReader.onload = function (fileLoadedEvent) {
-      var srcData = fileLoadedEvent.target.result;
+    const file = event.target.files[0];
+
+    if (file) {
+      const base64String = await resizeAndConvertToBase64(file);
       const index = baseData.filter((element) => {
         if (element.id === clickedPhoto) {
-          element.path = srcData;
+          element.path = base64String;
           return element;
         }
       });
       const arr = [...baseData, index];
       arr.pop();
       setBaseData(arr);
-    };
-    const options = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
-    };
-    try {
-      const compressedFile = await imageCompression(imageFile, options);
-      fileReader.readAsDataURL(compressedFile);
-    } catch (error) {
-      console.log(error);
     }
   }
-  function handleSave() {
-    const customData = [
-      {
-        path:
-          baseData[0].path === "/images/photo1.jpg"
-            ? "/images/photo1.jpg"
-            : baseData[0].path,
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path:
-          baseData[1].path === "/images/photo2.jpg"
-            ? "/images/photo2.jpg"
-            : baseData[1].path,
+  const resizeAndConvertToBase64 = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
 
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path:
-          baseData[2].path === "/images/photo3.jpg"
-            ? "/images/photo3.jpg"
-            : baseData[2].path,
+          // You can set the desired width and height here
+          const maxWidth = 350;
+          const maxHeight = 400;
 
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path:
-          baseData[3].path === "/images/photo4.jpg"
-            ? "/images/photo4.jpg"
-            : baseData[3].path,
+          let newWidth = img.width;
+          let newHeight = img.height;
 
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path:
-          baseData[4].path === "/images/photo5.jpg"
-            ? "/images/photo5.jpg"
-            : baseData[4].path,
+          if (img.width > maxWidth || img.height > maxHeight) {
+            const aspectRatio = img.width / img.height;
 
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-      {
-        path:
-          baseData[5].path === "/images/photo6.jpg"
-            ? "/images/photo6.jpg"
-            : baseData[5].path,
-        clicked: true,
-        id: Math.floor(Math.random() * 100000),
-        solved: false,
-      },
-    ];
-    const urlFriendly = customData.map((element) => {
-      return (
-        element.path.replace(/\+/g, "-"),
-        element.path.replace(/\//g, "_"),
-        element.path.replace(/\=+$/, "")
-      );
+            if (img.width > maxWidth) {
+              newWidth = maxWidth;
+              newHeight = maxWidth / aspectRatio;
+            }
+
+            if (newHeight > maxHeight) {
+              newHeight = maxHeight;
+              newWidth = maxHeight * aspectRatio;
+            }
+          }
+
+          canvas.width = newWidth;
+          canvas.height = newHeight;
+
+          ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+          const newDataUrl = canvas.toDataURL("image/jpeg", 0.7); // You can adjust the quality
+
+          resolve(newDataUrl);
+        };
+      };
+
+      reader.readAsDataURL(file);
     });
-    const size = new TextEncoder().encode(JSON.stringify(urlFriendly)).length;
-    const kiloBytes = size / 1024;
-    const megaBytes = kiloBytes / 1024;
-    const solution = urlFriendly.map((element) =>
-      element.replace(/-/g, "+").replace(/_/g, "/")
-    );
-    console.log("before", kiloBytes);
-    const sizeOfAfter = new TextEncoder().encode(
-      JSON.stringify(solution)
-    ).length;
-    const kil = sizeOfAfter / 1024;
-    console.log("after", kil);
-    // fetch("http://localhost:8080/user/photo", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({
-    //     base64: urlFriendly,
-    //     username: getCookie("sign"),
-    //   }),
-    // })
-    //   .then((res) => res.json())
-    //   .then((element) => console.log(element));
+  };
+
+  function handleSave() {
+    const customData = baseData.filter((element) => {
+      if (
+        element.path === "/images/photo1.jpg" ||
+        element.path === "/images/photo2.jpg" ||
+        element.path === "/images/photo3.jpg" ||
+        element.path === "/images/photo4.jpg" ||
+        element.path === "/images/photo5.jpg" ||
+        element.path === "/images/photo6.jpg"
+      ) {
+      } else {
+        return element;
+      }
+    });
+    const urlFriendly = customData.map((element) => {
+      return element.path.replace(/-/g, "+").replace(/_/g, "/");
+    });
+    if (urlFriendly.length === 0) {
+      console.log("no changes detected");
+    }
+    urlFriendly.map(async (element, index) => {
+      console.log("sending file number ", index);
+      await fetch("https://backend-one-lemon.vercel.app/user/photo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          base64: element,
+          username: getCookie("sign"),
+        }),
+      })
+        .then((res) => res.json())
+        .then(
+          (element) => console.log(element),
+          console.log("sent"),
+          router.push("/")
+        )
+        .catch((err) => console.log(err));
+    });
   }
   return (
     <div className="flex h-[100vh] w-[100vw] justify-center flex-col items-center gap-5">
       <h1>editing photo</h1>
-      <div className="flex gap-5">
+      <div className="flex gap-5 justify-center">
         {baseData.map((element, index) => {
           return (
             <div
-              className="flex h-[200px] w-[114px] rounded-lg border-2 border-white gap-[10px] "
+              className=" h-max w-[10%] flex rounded-lg border-2 border-white gap-[10px] "
               key={index}
             >
-              <Image
+              <img
                 alt={`phots-${index}`}
                 className="rounded-[10px]"
-                width={110}
-                height={140}
                 src={element.path}
                 onClick={() => handleClick(element.id)}
-              ></Image>
+              ></img>
             </div>
           );
         })}
@@ -171,6 +150,12 @@ export default function App() {
         className="border-2 rounded-[10px] p-[10px] hover:bg-[#696969] transition-all duration-300"
       >
         save
+      </button>
+      <button
+        onClick={() => router.push("/")}
+        className="border-2 rounded-[10px] p-[10px] hover:bg-[#696969] transition-all duration-300"
+      >
+        return home
       </button>
     </div>
   );
