@@ -3,13 +3,11 @@ import { useRouter } from "next/navigation";
 import { getCookie } from "cookies-next";
 import { useEffect, useState } from "react";
 import { CheckSign } from "./components/CheckSign";
-import { Data } from "./components/Data";
 export default function App() {
   const router = useRouter();
   const [sign, setSign] = useState();
   useEffect(() => {
     setSign(getCookie("sign"));
-    console.log(Data);
   }, []);
   return (
     <div className="flex justify-center items-center h-[100vh] w-[100vw] relative">

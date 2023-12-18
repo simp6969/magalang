@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Data } from "../components/Data";
 import { getCookie } from "cookies-next";
+import { Validate } from "../components/ValidateUser";
 
 export default function App() {
   const [clickedPhoto, setClickedPhoto] = useState();
@@ -122,6 +123,7 @@ export default function App() {
   return (
     <div className="flex h-[100vh] w-[100vw] justify-center flex-col items-center gap-5">
       <h1>editing photo</h1>
+      <Validate />
       <div className="flex gap-5 justify-center">
         {baseData.map((element, index) => {
           return (

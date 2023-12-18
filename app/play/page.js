@@ -9,7 +9,7 @@ import { Data } from "../components/Data";
 
 export default function App() {
   const router = useRouter();
-  const [property, setProperty] = useState(shuffleArray(Data));
+  const [property, setProperty] = useState(shuffleArray(Data()));
   const [fisrtClick, setFirstClick] = useState();
   const [displayTime, setDisplayTime] = useState(0);
   const [sign, setSign] = useState();
@@ -17,7 +17,8 @@ export default function App() {
   const [data, setData] = useState({ fisrtClick: 0, click: 1 });
   let seconds = 0;
   function shuffleArray(array) {
-    const sorted = array.sort((a, b) => a.id - b.id);
+    console.log("array", array);
+    const sorted = array?.sort((a, b) => a.id - b.id);
     return sorted;
   }
   function handleCardClick(id, path, solved) {

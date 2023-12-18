@@ -89,6 +89,17 @@ app.post("/user/photo", (req, res) => {
   res.json(model);
 });
 
+app.get("/user/photo/:username", async (req, res) => {
+  const { username } = req.params;
+  const result = await userModel.PhotoModel.find();
+  // const result = await userModel.PhotoModel.findOneAndUpdate(
+  //   { name: "bob" },
+  //   { name: "John" }
+  // );
+  const filt = result.filter((element) => element.username === username);
+  res.json(filt);
+});
+
 app.listen(8080);
 // [
 //     {
