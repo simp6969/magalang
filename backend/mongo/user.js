@@ -15,6 +15,7 @@ const ScoreSchema = new Schema({
 const PhotoSchema = new Schema({
   base64: String,
   username: String,
+  originalPath: String,
 });
 
 const PhotoModel = model("photo", PhotoSchema);

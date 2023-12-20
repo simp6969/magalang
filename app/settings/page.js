@@ -9,11 +9,12 @@ import { Validate } from "../components/ValidateUser";
 export default function App() {
   const [clickedPhoto, setClickedPhoto] = useState();
   const [baseData, setBaseData] = useState(() => {
-    const unique = Data.filter((obj, index) => {
-      return index === Data.findIndex((o) => obj.path === o.path);
+    const unique = Data().filter((obj, index) => {
+      return index === Data().findIndex((o) => obj.path === o.path);
     });
     return unique;
   });
+  const [clickedPath, setClickedPath] = useState();
   const router = useRouter();
   function handleClick(id) {
     document.getElementById("input").click();
@@ -24,8 +25,9 @@ export default function App() {
 
     if (file) {
       const base64String = await resizeAndConvertToBase64(file);
-      const index = baseData.filter((element) => {
+      const index = baseData.map((element) => {
         if (element.id === clickedPhoto) {
+          setClickedPath(element.path);
           element.path = base64String;
           return element;
         }
@@ -109,6 +111,7 @@ export default function App() {
         body: JSON.stringify({
           base64: element,
           username: getCookie("sign"),
+          originalPath: clickedPath,
         }),
       })
         .then((res) => res.json())

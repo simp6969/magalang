@@ -1,3 +1,6 @@
+import axios from "axios";
+import { getCookie } from "cookies-next";
+
 const path = [
   { path: "/images/photo1.jpg" },
   { path: "/images/photo2.jpg" },
@@ -12,8 +15,19 @@ const path = [
   { path: "/images/photo5.jpg" },
   { path: "/images/photo6.jpg" },
 ];
-
 export function Data() {
+  // if (getCookie("sign")) {
+  //   return axios
+  //     .get(
+  //       "https://backend-one-lemon.vercel.app/user/photo/" + getCookie("sign")
+  //     )
+  //     .then((res) => {
+  //       const filt = path.map((element) => {
+  //         return res.data.filter((e) => e.orignalPath === element.path);
+  //       });
+  //       console.log(filt);
+  //     });
+  // } else {
   return path.map((element) => {
     return {
       path: element.path,
@@ -22,6 +36,7 @@ export function Data() {
       solved: false,
     };
   });
+  // }
 }
 // {
 //   path: "/images/photo1.jpg",

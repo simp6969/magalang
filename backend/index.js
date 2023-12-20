@@ -84,6 +84,7 @@ app.post("/user/photo", (req, res) => {
   const model = {
     base64: body.base64,
     username: body.username,
+    originalPath: body.originalPath,
   };
   userModel.PhotoModel.create(model);
   res.json(model);
