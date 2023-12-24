@@ -22,7 +22,11 @@ export default function App() {
     return s1.highscore - s2.highscore;
   });
   if (userdata.length === 0) {
-    return <div>loading....</div>;
+    return (
+      <div className="flex justify-center items-center h-[100vh] w-[100vw] text-[40px]">
+        <h1>Loading Content...</h1>
+      </div>
+    );
   }
   return (
     <div className=" flex text-[25px] justify-center gap-[10px] items-center p-[20px] h-[100vh] w-[100vw] flex-col">
@@ -30,7 +34,7 @@ export default function App() {
         <h1>{filt.username}</h1>
         <h1>high score: {filt.highscore}</h1>
         <h1>global rank:</h1>
-        <div className="flex justify-space gap-[13px] text-[16px] ">
+        <div className="flex justify-space gap-[15px] text-[16px] ">
           <h1>place</h1>
           <h1>username</h1>
           <h1>seconds</h1>

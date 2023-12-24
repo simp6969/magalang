@@ -1,72 +1,34 @@
-"use client";
+const fs = require("fs");
+const base64url = require("base64url");
 
-import React, { useRef } from "react";
+// Function to encode a file to base64url
+function encodeFileToBase64Url(filePath) {
+  // Read the file as a Buffer
+  const fileBuffer = fs.readFileSync(filePath);
 
-const ImageUploader = () => {
-  const inputRef = useRef(null);
+  // Encode the Buffer to base64url
+  const base64UrlString = base64url(fileBuffer);
 
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
+  return base64UrlString;
+}
 
-    if (file) {
-      const base64String = await resizeAndConvertToBase64(file);
-      console.log(base64String);
-    }
-  };
+// Function to decode a base64url string to a file
+function decodeBase64UrlToFile(base64UrlString, outputPath) {
+  // Decode the base64url string to a Buffer
+  const decodedBuffer = base64url.toBuffer(base64UrlString);
 
-  const resizeAndConvertToBase64 = (file) => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
+  // Write the decoded Buffer to a file
+  fs.writeFileSync(outputPath, decodedBuffer);
 
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target.result;
+  return outputPath;
+}
 
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
+// Example usage
+const inputFilePath = "./test.txt";
+const outputFilePath = "./test.txt";
 
-          // You can set the desired width and height here
-          const maxWidth = 300;
-          const maxHeight = 300;
+const base64UrlString = encodeFileToBase64Url(inputFilePath);
+console.log("Encoded:", base64UrlString);
 
-          let newWidth = img.width;
-          let newHeight = img.height;
-
-          if (img.width > maxWidth || img.height > maxHeight) {
-            const aspectRatio = img.width / img.height;
-
-            if (img.width > maxWidth) {
-              newWidth = maxWidth;
-              newHeight = maxWidth / aspectRatio;
-            }
-
-            if (newHeight > maxHeight) {
-              newHeight = maxHeight;
-              newWidth = maxHeight * aspectRatio;
-            }
-          }
-
-          canvas.width = newWidth;
-          canvas.height = newHeight;
-
-          ctx.drawImage(img, 0, 0, newWidth, newHeight);
-
-          const newDataUrl = canvas.toDataURL("image/jpeg", 0.4); // You can adjust the quality
-
-          resolve(newDataUrl);
-        };
-      };
-
-      reader.readAsDataURL(file);
-    });
-  };
-
-  return (
-    <div>
-      <input type="file" ref={inputRef} onChange={handleFileChange} />
-    </div>
-  );
-};
-
-export default ImageUploader;
+decodeBase64UrlToFile(base64UrlString, outputFilePath);
+console.log("Decoded to file:", outputFilePath);

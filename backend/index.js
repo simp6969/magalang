@@ -86,8 +86,9 @@ app.post("/user/photo", (req, res) => {
     username: body.username,
     originalPath: body.originalPath,
   };
-  userModel.PhotoModel.create(model);
-  res.json(model);
+  // userModel.PhotoModel.create(model);
+  var g = JSON.stringify(model).replace(/[\[\]\,\"]/g, "");
+  res.json(model.base64);
 });
 
 app.get("/user/photo/:username", async (req, res) => {

@@ -5,16 +5,17 @@ import { useState } from "react";
 import { Data } from "../components/Data";
 import { getCookie } from "cookies-next";
 import { Validate } from "../components/ValidateUser";
+import { EditPhoto } from "../components/EditPhoto";
 
 export default function App() {
   const [clickedPhoto, setClickedPhoto] = useState();
+  const [preData, setPreData] = useState([]);
   const [baseData, setBaseData] = useState(() => {
     const unique = Data().filter((obj, index) => {
       return index === Data().findIndex((o) => obj.path === o.path);
     });
     return unique;
   });
-  const [clickedPath, setClickedPath] = useState();
   const router = useRouter();
   function handleClick(id) {
     document.getElementById("input").click();
@@ -27,7 +28,7 @@ export default function App() {
       const base64String = await resizeAndConvertToBase64(file);
       const index = baseData.map((element) => {
         if (element.id === clickedPhoto) {
-          setClickedPath(element.path);
+          setPreData([...preData, { originalPath: element.path }]);
           element.path = base64String;
           return element;
         }
@@ -73,7 +74,7 @@ export default function App() {
 
           ctx.drawImage(img, 0, 0, newWidth, newHeight);
 
-          const newDataUrl = canvas.toDataURL("image/jpeg", 0.7); // You can adjust the quality
+          const newDataUrl = canvas.toDataURL("image/jpeg", 0.7); // en john sevte2
 
           resolve(newDataUrl);
         };
@@ -104,14 +105,14 @@ export default function App() {
       console.log("no changes detected");
     }
     urlFriendly.map(async (element, index) => {
-      console.log("sending file number ", index);
-      await fetch("https://backend-one-lemon.vercel.app/user/photo", {
+      // await fetch("https://backend-one-lemon.vercel.app/user/photo", {
+      await fetch("http://localhost:8080/user/photo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           base64: element,
           username: getCookie("sign"),
-          originalPath: clickedPath,
+          ...preData[index],
         }),
       })
         .then((res) => res.json())
@@ -127,19 +128,15 @@ export default function App() {
     <div className="flex h-[100vh] w-[100vw] justify-center flex-col items-center gap-5">
       <h1>editing photo</h1>
       <Validate />
-      <div className="flex gap-5 justify-center">
+      <div className="flex flex-wrap gap-5 justify-center">
         {baseData.map((element, index) => {
           return (
             <div
-              className=" h-max w-[10%] flex rounded-lg border-2 border-white gap-[10px] "
+              className=" h-max w-[20%] flex rounded-lg border-2 border-white gap-[10px] sm:w-[14%]"
               key={index}
+              onClick={() => handleClick(element.id)}
             >
-              <img
-                alt={`phots-${index}`}
-                className="rounded-[10px]"
-                src={element.path}
-                onClick={() => handleClick(element.id)}
-              ></img>
+              <EditPhoto src={element.path} />
             </div>
           );
         })}
