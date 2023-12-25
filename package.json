@@ -21,6 +21,7 @@
     "cookies-next": "^4.1.0",
     "create-next-app": "^14.0.3",
     "dotenv": "^16.3.1",
+    "express-fileupload": "^1.4.3",
     "knuth-shuffle-seeded": "^1.0.6",
     "lzma": "^2.3.2",
     "lzma-purejs": "^0.9.3",
