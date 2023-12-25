@@ -1,13 +1,14 @@
 const connectMongo = require("./mongo/mongodb.js");
 const express = require("express");
 const cors = require("cors");
+var compression = require("compression");
 const userModel = require("./mongo/user.js");
 const app = express();
 
 connectMongo();
 app.use(cors());
 app.use(express.json());
-
+app.use(compression());
 app.get("/", (req, res) => {
   res.send("backend working properly");
 });
