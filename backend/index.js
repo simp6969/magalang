@@ -2,11 +2,14 @@ const connectMongo = require("./mongo/mongodb.js");
 const express = require("express");
 const cors = require("cors");
 const userModel = require("./mongo/user.js");
+const fs = require("fs");
+var fileupload = require("express-fileupload");
 const app = express();
 
 connectMongo();
 app.use(cors());
 app.use(express.json());
+app.use(fileupload());
 
 app.get("/", (req, res) => {
   res.send("backend working properly");
@@ -100,6 +103,17 @@ app.get("/user/photo/:username", async (req, res) => {
   // );
   const filt = result.filter((element) => element.username === username);
   res.json(filt);
+});
+
+app.post("/test", (req, res) => {
+  // console.log(req.files);
+  // write.appendFile("./data/images.txt", write.read("./data/images.txt"));
+  const read = fs.createReadStream("./data/images.txt");
+  read.on("data", function (chunk) {
+    const write = fs.createWriteStream("./data/images.txt", "utf-8");
+    write.write(chunk.toString(), req.files.data);
+    res.json(chunk.toString());
+  });
 });
 
 app.listen(8080);

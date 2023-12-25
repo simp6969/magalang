@@ -6,6 +6,7 @@ import { Data } from "../components/Data";
 import { getCookie } from "cookies-next";
 import { Validate } from "../components/ValidateUser";
 import { EditPhoto } from "../components/EditPhoto";
+import axios from "axios";
 
 export default function App() {
   const [clickedPhoto, setClickedPhoto] = useState();
@@ -21,22 +22,40 @@ export default function App() {
     document.getElementById("input").click();
     setClickedPhoto(id);
   }
+
+  //edit
   async function handleFile(event) {
     const file = event.target.files[0];
-
-    if (file) {
-      const base64String = await resizeAndConvertToBase64(file);
-      const index = baseData.map((element) => {
-        if (element.id === clickedPhoto) {
-          setPreData([...preData, { originalPath: element.path }]);
-          element.path = base64String;
-          return element;
-        }
+    const formData = new FormData();
+    formData.append("file", file);
+    console.log(formData.append("file", file));
+    axios
+      .post("http://localhost:8080/test", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
       });
-      const arr = [...baseData, index];
-      arr.pop();
-      setBaseData(arr);
-    }
+    // const file = event.target.files[0];
+
+    // if (file) {
+    //   const base64String = await resizeAndConvertToBase64(file);
+    //   const index = baseData.map((element) => {
+    //     if (element.id === clickedPhoto) {
+    //       setPreData([...preData, { originalPath: element.path }]);
+    //       element.path = base64String;
+    //       return element;
+    //     }
+    //   });
+    //   const arr = [...baseData, index];
+    //   arr.pop();
+    //   setBaseData(arr);
+    // }
   }
   const resizeAndConvertToBase64 = (file) => {
     return new Promise((resolve) => {
@@ -83,7 +102,7 @@ export default function App() {
       reader.readAsDataURL(file);
     });
   };
-
+  //edit
   function handleSave() {
     const customData = baseData.filter((element) => {
       if (
