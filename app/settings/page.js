@@ -9,65 +9,46 @@ import { EditPhoto } from "../components/EditPhoto";
 import axios from "axios";
 
 export default function App() {
-  const [clickedPhoto, setClickedPhoto] = useState();
+  const [clickedPhoto, setClickedPhoto] = useState(null);
   const [preData, setPreData] = useState([]);
   const [baseData, setBaseData] = useState(() => {
-    const unique = Data().filter((obj, index) => {
-      return index === Data().findIndex((o) => obj.path === o.path);
-    });
+    const unique = Data().filter(
+      (obj, index) => index === Data().findIndex((o) => obj.path === o.path)
+    );
     return unique;
   });
   const router = useRouter();
-  function handleClick(id) {
-    document.getElementById("input").click();
-    setClickedPhoto(id);
-  }
 
-  //edit
-  async function handleFile(event) {
+  const handleFile = async (event) => {
     const file = event.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    console.log(formData.append("file", file));
-    axios
-      .post("http://localhost:8080/test", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    // const file = event.target.files[0];
 
-    // if (file) {
-    //   const base64String = await resizeAndConvertToBase64(file);
-    //   const index = baseData.map((element) => {
-    //     if (element.id === clickedPhoto) {
-    //       setPreData([...preData, { originalPath: element.path }]);
-    //       element.path = base64String;
-    //       return element;
-    //     }
-    //   });
-    //   const arr = [...baseData, index];
-    //   arr.pop();
-    //   setBaseData(arr);
-    // }
-  }
+    if (file) {
+      try {
+        const base64String = await resizeAndConvertToBase64(file);
+        setPreData([...preData, { originalPath: baseData[clickedPhoto].path }]);
+        setBaseData((prevBaseData) => {
+          const updatedData = [...prevBaseData];
+          updatedData[clickedPhoto].path = base64String;
+          return updatedData;
+        });
+      } catch (error) {
+        console.error("Error processing image:", error);
+      }
+    }
+  };
+
   const resizeAndConvertToBase64 = (file) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader();
+
       reader.onload = (event) => {
         const img = new Image();
         img.src = event.target.result;
+
         img.onload = () => {
           const canvas = document.createElement("canvas");
           const ctx = canvas.getContext("2d");
 
-          // You can set the desired width and height here
           const maxWidth = 350;
           const maxHeight = 400;
 
@@ -93,72 +74,82 @@ export default function App() {
 
           ctx.drawImage(img, 0, 0, newWidth, newHeight);
 
-          const newDataUrl = canvas.toDataURL("image/jpeg", 0.7); // en john sevte2
-
+          const newDataUrl = canvas.toDataURL("image/jpeg", 0.7);
           resolve(newDataUrl);
         };
+      };
+
+      reader.onerror = (error) => {
+        reject(error);
       };
 
       reader.readAsDataURL(file);
     });
   };
-  //edit
-  function handleSave() {
-    const customData = baseData.filter((element) => {
-      if (
-        element.path === "/images/photo1.jpg" ||
-        element.path === "/images/photo2.jpg" ||
-        element.path === "/images/photo3.jpg" ||
-        element.path === "/images/photo4.jpg" ||
-        element.path === "/images/photo5.jpg" ||
-        element.path === "/images/photo6.jpg"
-      ) {
-      } else {
-        return element;
-      }
-    });
-    const urlFriendly = customData.map((element) => {
-      return element.path.replace(/-/g, "+").replace(/_/g, "/");
-    });
+
+  const handleSave = async () => {
+    const customData = baseData.filter(
+      (element) =>
+        ![
+          "/images/photo1.jpg",
+          "/images/photo2.jpg",
+          "/images/photo3.jpg",
+          "/images/photo4.jpg",
+          "/images/photo5.jpg",
+          "/images/photo6.jpg",
+        ].includes(element.path)
+    );
+
+    const urlFriendly = customData.map((element) =>
+      element.path.replace(/-/g, "+").replace(/_/g, "/")
+    );
+
     if (urlFriendly.length === 0) {
-      console.log("no changes detected");
+      console.log("No changes detected");
+      return;
     }
-    urlFriendly.map(async (element, index) => {
-      // await fetch("https://backend-one-lemon.vercel.app/user/photo", {
-      await fetch("http://localhost:8080/user/photo", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          base64: element,
-          username: getCookie("sign"),
-          ...preData[index],
-        }),
-      })
-        .then((res) => res.json())
-        .then(
-          (element) => console.log(element),
-          console.log("sent"),
-          router.push("/")
-        )
-        .catch((err) => console.log(err));
-    });
-  }
+
+    try {
+      await Promise.all(
+        urlFriendly.map(async (element, index) => {
+          const response = await axios.post(
+            "http://localhost:8080/user/photo",
+            {
+              base64: element,
+              username: getCookie("sign"),
+              ...preData[index],
+            }
+          );
+          console.log(response.data);
+        })
+      );
+
+      console.log("All images sent successfully");
+      // router.push("/");
+    } catch (error) {
+      console.error("Error sending images:", error);
+    }
+  };
+
+  const handleClick = (index) => {
+    document.getElementById("input").click();
+    setClickedPhoto(index);
+  };
+
   return (
     <div className="flex h-[100vh] w-[100vw] justify-center flex-col items-center gap-5">
-      <h1>editing photo</h1>
+      <h1>Editing Photo</h1>
       <Validate />
       <div className="flex flex-wrap gap-5 justify-center">
-        {baseData.map((element, index) => {
-          return (
-            <div
-              className=" h-max w-[20%] flex rounded-lg border-2 border-white gap-[10px] sm:w-[14%]"
-              key={index}
-              onClick={() => handleClick(element.id)}
-            >
-              <EditPhoto src={element.path} />
-            </div>
-          );
-        })}
+        {baseData.map((element, index) => (
+          <div
+            className="h-max w-[20%] flex rounded-lg border-2 border-white gap-[10px] sm:w-[14%]"
+            key={index}
+            onClick={() => handleClick(index)}
+          >
+            <EditPhoto src={element.path} />
+          </div>
+        ))}
         <input
           type="file"
           className="hidden"
@@ -170,13 +161,13 @@ export default function App() {
         onClick={handleSave}
         className="border-2 rounded-[10px] p-[10px] hover:bg-[#696969] transition-all duration-300"
       >
-        save
+        Save
       </button>
       <button
         onClick={() => router.push("/")}
         className="border-2 rounded-[10px] p-[10px] hover:bg-[#696969] transition-all duration-300"
       >
-        return home
+        Return Home
       </button>
     </div>
   );

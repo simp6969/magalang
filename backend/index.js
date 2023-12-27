@@ -10,12 +10,9 @@ const app = express();
 connectMongo();
 app.use(cors());
 app.use(express.json());
-<<<<<<< HEAD
 app.use(compression());
-=======
 app.use(fileupload());
 
->>>>>>> adfec35ab1e6d404922edcab2fbfbda4a282fdd1
 app.get("/", (req, res) => {
   res.send("backend working properly");
 });
@@ -89,44 +86,34 @@ app.post("/user/highscore", async (req, res) => {
 
 app.post("/user/photo", (req, res) => {
   const body = req.body;
-  const model = {
-    base64: body.base64,
-    username: body.username,
-    originalPath: body.originalPath,
-  };
+  const model = [
+    {
+      base64: body.base64,
+      username: body.username,
+      originalPath: body.originalPath,
+    },
+  ];
   // userModel.PhotoModel.create(model);
-  var g = JSON.stringify(model).replace(/[\[\]\,\"]/g, "");
-  res.json(model.base64);
+  fs.readFile("./data/images.json", (err, data) => {
+    const raw = JSON.parse(data);
+    console.log(raw);
+    raw.map((element) => {
+      model.push(element);
+    });
+    fs.writeFile(
+      "./data/images.json",
+      [JSON.stringify(model), JSON.stringify(raw)],
+      () => {}
+    );
+  });
+  res.json(model);
 });
 
 app.get("/user/photo/:username", async (req, res) => {
   const { username } = req.params;
   const result = await userModel.PhotoModel.find();
-  // const result = await userModel.PhotoModel.findOneAndUpdate(
-  //   { name: "bob" },
-  //   { name: "John" }
-  // );
   const filt = result.filter((element) => element.username === username);
   res.json(filt);
 });
 
-app.post("/test", (req, res) => {
-  // console.log(req.files);
-  // write.appendFile("./data/images.txt", write.read("./data/images.txt"));
-  const read = fs.createReadStream("./data/images.txt");
-  read.on("data", function (chunk) {
-    const write = fs.createWriteStream("./data/images.txt", "utf-8");
-    write.write(chunk.toString(), req.files.data);
-    res.json(chunk.toString());
-  });
-});
-
 app.listen(8080);
-// [
-//     {
-//       path: body.path,
-//       clicked: body.clicked,
-//       id: body.id,
-//       solved: body.solved,
-//     },
-//   ];
