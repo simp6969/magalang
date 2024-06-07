@@ -1,0 +1,100 @@
+/* header styles */
+
+h1 {
+  font-size: 25px;
+  font-weight: 700;
+}
+p {
+  font-size: 18px;
+}
+svg:hover {
+  cursor: pointer;
+}
+.card-container {
+  width: 1000px;
+  justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  transition: 300ms;
+  perspective: 1000px;
+}
+.card {
+  border-radius: 10px;
+  background-color: #3a2f31;
+  position: absolute;
+  backface-visibility: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+.responsiveCard {
+  position: relative;
+  width: 150px;
+  height: 260px;
+  transition: 500ms;
+  transform-style: preserve-3d;
+}
+
+/* .card-container:hover .responsiveCard {
+  transform: rotateY(180deg);
+} */
+
+.cardFront,
+.cardBack {
+  border-radius: 10px;
+  background-color: #3a2f31;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  cursor: pointer;
+}
+
+.cardBack {
+  transform: rotateY(180deg);
+}
+
+/* border-2 border-black rounded-lg p-[10px] px-[15px] hover:scale-[1.08] transition-[300ms] */
+
+.primaryButton {
+  border-radius: 10px;
+  padding: 10px 15px 10px 15px;
+  transition: 300ms;
+  text-align: center;
+  color: black;
+  font-weight: 600;
+  /* background-color: #e76f51; */
+  width: 80px;
+  border: solid #3a2f31 2px;
+  height: 50px;
+}
+
+.primaryButton:hover {
+  cursor: pointer;
+  scale: 1.04;
+}
+.cl-avatarBox {
+  width: 50px;
+  height: 50px;
+}
+
+@media screen and (max-width: 700px) {
+  .responsiveCard {
+    width: 100px;
+    height: 210px;
+  }
+}
+@media screen and (max-width: 500px) {
+  .responsiveCard {
+    width: 90px;
+    height: 160px;
+  }
+}
+@media screen and (max-height: 700px) {
+  .responsiveCard {
+    width: 80px;
+    height: 120px;
+  }
+}
