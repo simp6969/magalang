@@ -14,109 +14,108 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function MainSolvingCards() {
-  const [mainPipeOfState, setMainStateOfPipe] = useState({
+  const [gameState, setGameState] = useState({
     paused: true,
+    gameStarted: false,
     dataFromStorage: null,
-    hideCards: false,
     selectedCards: [],
     correctAnswers: [],
     selectedPath: [],
+    currentSeconds: 0,
+    MenuPaused: true,
   });
   const router = useRouter();
   const { user } = useUser();
 
+  // Fetch card data on component mount
   useEffect(() => {
-    setMainStateOfPipe({
-      ...mainPipeOfState,
+    setGameState((prev) => ({
+      ...prev,
       dataFromStorage: PhotoStorageController(),
-    });
+    }));
   }, []);
-  useEffect(() => {
-    if (!mainPipeOfState.paused) {
-      setTimeout(() => {
-        setMainStateOfPipe({ ...mainPipeOfState, hideCards: true });
-      }, 3000);
-    }
-  }, [mainPipeOfState.paused]);
 
+  // Timer Management
   useEffect(() => {
-    if (mainPipeOfState.correctAnswers.length === 12) {
-      setTimeout(() => {
-        router.push("/result");
-      }, 3000);
+    let intervalId;
+
+    if (gameState.gameStarted) {
+      intervalId = setInterval(() => {
+        setGameState((prev) => ({
+          ...prev,
+          currentSeconds: prev.currentSeconds + 1,
+        }));
+      }, 1000);
     }
-    [mainPipeOfState.correctAnswers];
-  });
+
+    // Cleanup function to clear the interval
+    return () => clearInterval(intervalId);
+  }, [gameState.gameStarted]);
+
+  // Handle game completion
+  useEffect(() => {
+    async function run() {
+      if (gameState.correctAnswers.length === 12) {
+        setGameState((prev) => ({
+          ...prev,
+          gameStarted: false,
+        }));
+        console.log("current seconds" + gameState.currentSeconds);
+        if (user?.id) {
+          await fetch("http://localhost:8000" + "/score", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              firstname: user.firstName,
+              lastname: user.lastName,
+              userid: user.id,
+              score: gameState.currentSeconds,
+            }),
+          })
+            .then((res) => res.json())
+            .then((data) => console.log(data));
+        }
+        router.push("/score");
+      }
+    }
+    run();
+  }, [gameState.correctAnswers]);
 
   function handleHiddenImage(id, path) {
-    setMainStateOfPipe({
-      ...mainPipeOfState,
-      selectedCards: [...mainPipeOfState.selectedCards, id],
-      selectedPath: [...mainPipeOfState.selectedPath, path],
-    });
+    setGameState((prev) => ({
+      ...prev,
+      selectedCards: [...prev.selectedCards, id],
+      selectedPath: [...prev.selectedPath, path],
+    }));
 
-    if (mainPipeOfState.selectedCards.length === 1) {
-      function equal() {
-        if (
-          mainPipeOfState.selectedPath[0] === path &&
-          mainPipeOfState.selectedCards[0] !== id
-        ) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-      if (equal()) {
-        var timer1 = setTimeout(() => {
-          setMainStateOfPipe({
-            ...mainPipeOfState,
-            correctAnswers: [
-              ...mainPipeOfState.correctAnswers,
-              id,
-              mainPipeOfState.selectedCards[0],
-            ],
+    if (gameState.selectedCards.length === 1) {
+      if (
+        gameState.selectedPath[0] === path &&
+        gameState.selectedCards[0] !== id
+      ) {
+        setTimeout(() => {
+          setGameState((prev) => ({
+            ...prev,
+            correctAnswers: [...prev.correctAnswers, id, prev.selectedCards[0]],
             selectedCards: [],
             selectedPath: [],
-          });
-        }, 500);
+          }));
+        }, 300);
       } else {
-        var timer2 = setTimeout(() => {
-          setMainStateOfPipe({
-            ...mainPipeOfState,
+        setTimeout(() => {
+          setGameState((prev) => ({
+            ...prev,
             selectedCards: [],
             selectedPath: [],
-          });
-        }, 500);
+          }));
+        }, 300);
       }
     }
-
-    // if (mainPipeOfState.selectedCards.length == 0) {
-    //   setMainStateOfPipe({
-    //     ...mainPipeOfState,
-    //     selectedCards: [...mainPipeOfState.selectedCards, id],
-    //     selectedPath: [path, ...mainPipeOfState.selectedPath],
-    //   });
-    // }
-    // if (mainPipeOfState.selectedCards.length == 1) {
-    //   setTimeout(() => {
-    //     if (mainPipeOfState.selectedPath[0] === path) {
-    //       setMainStateOfPipe({
-    //         ...mainPipeOfState,
-    //         correctAnswers: [...mainPipeOfState.correctAnswers, path],
-    //         selectedCards: [],
-    //         selectedPath: [],
-    //       });
-    //     }
-    //   }, 500);
-    // } else {
-    //   setMainStateOfPipe({
-    //     ...mainPipeOfState,
-    //     selectedCards: [],
-    //     selectedPath: [],
-    //   });
-    // }
   }
-  console.log(mainPipeOfState.correctAnswers.length);
+
+  // Render the game
   return (
     <div className="w-[100%] h-[100%] flex justify-center items-center">
       <ClerkLoading>
@@ -126,7 +125,7 @@ export function MainSolvingCards() {
         <div
           className="absolute top-[10px] right-[10px] flex-row gap-[10px] text-[#3a2f31] justify-center items-center"
           style={{
-            display: mainPipeOfState?.paused ? "flex" : "none",
+            display: gameState?.MenuPaused ? "flex" : "none",
           }}
         >
           {user ? <p>Welcome {user.lastName}</p> : <p>Welcome Guest</p>}
@@ -139,7 +138,7 @@ export function MainSolvingCards() {
         </div>
         <div
           style={
-            mainPipeOfState?.paused
+            gameState?.MenuPaused
               ? {
                   display: "flex",
                   position: "absolute",
@@ -161,7 +160,17 @@ export function MainSolvingCards() {
             <button
               title="Play"
               onClick={() => {
-                setMainStateOfPipe({ ...mainPipeOfState, paused: false });
+                setGameState((prev) => ({
+                  ...prev,
+                  MenuPaused: false,
+                }));
+                setTimeout(() => {
+                  setGameState((prev) => ({
+                    ...prev,
+                    gameStarted: true,
+                    paused: false,
+                  }));
+                }, 3000);
               }}
               className="primaryButton"
             >
@@ -181,31 +190,25 @@ export function MainSolvingCards() {
         <div
           className="card-container"
           style={
-            mainPipeOfState.paused
+            gameState.MenuPaused
               ? { filter: "blur(50px)", position: "absolute", zIndex: "1" }
               : {}
           }
         >
-          {mainPipeOfState?.dataFromStorage?.map((e) => {
+          {gameState?.dataFromStorage?.map((e) => {
             return (
               <div
                 className="responsiveCard"
                 style={
-                  mainPipeOfState.hideCards &&
-                  !mainPipeOfState.selectedCards.includes(e.id) &&
-                  !mainPipeOfState.correctAnswers.includes(e.id)
-                    ? { transform: "rotateY(180deg)" }
-                    : { transform: "rotateY(0deg)" }
+                  !gameState.gameStarted ||
+                  gameState.selectedCards.includes(e.id) ||
+                  gameState.correctAnswers.includes(e.id)
+                    ? { transform: "rotateY(0deg)" }
+                    : { transform: "rotateY(180deg)" }
                 }
                 key={e.id}
               >
                 <Image
-                  // style={
-                  //   mainPipeOfState.hideCards &&
-                  //   !mainPipeOfState.selectedCards.includes(e.id)
-                  //     ? { transform: "rotateY(0deg)", transitionDelay: "100ms" }
-                  //     : { transform: "rotateY(90deg)" }
-                  // }
                   src={"/cards/cardBack.jpg"}
                   alt="guess the photo"
                   className=" cardBack duration-[200ms]"
@@ -220,14 +223,6 @@ export function MainSolvingCards() {
                   }}
                 />
                 <Image
-                  // style={handleImage()}
-                  // style={
-                  //   mainPipeOfState.hideCards &&
-                  //   !mainPipeOfState.selectedCards.includes(e.id) &&
-                  //   !mainPipeOfState.correctAnswers.includes(e.path)
-                  //     ? { transform: "rotateY(90deg)" }
-                  //     : {}
-                  // }
                   src={e.path}
                   alt="guess the photo"
                   className=" cardFront"

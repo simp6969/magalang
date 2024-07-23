@@ -4,6 +4,12 @@
 
 body {
   user-select: none;
-  background: white;
+  background: linear-gradient(to right, #f9e9da, #9d3e44);
   color: #3a2f31;
+}
+
+.banner {
+  padding-right: 17px;
+  box-sizing: content-box;
+  overflow-y: scroll;
 }
