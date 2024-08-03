@@ -2,14 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+body.dark {
   user-select: none;
-  background: linear-gradient(to right, #f9e9da, #9d3e44);
   color: #3a2f31;
+  background-image: url("../public/darkModePc.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position-x: left;
+}
+body.light {
+  background-image: url("../public/pcWallpaperHuTaoSimp.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .banner {
   padding-right: 17px;
   box-sizing: content-box;
   overflow-y: scroll;
+}
+
+.button-16 {
+  height: 80px;
+  width: 160px;
+  font-size: 16px;
+  font-weight: 600;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  border: 2px solid #3a2f31;
+  padding: 10px;
+  display: flex;
+}
+
+@media screen and (max-width: 500px) {
+  body.dark {
+    background-image: url("../public/darkmodeMobileDevice.jpg");
+    background-position-x: right;
+  }
+  body.light {
+    background-image: url("../public/mobileWallpaperHuTaoSimp.jpg");
+  }
 }

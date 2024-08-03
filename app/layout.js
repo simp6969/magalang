@@ -12,15 +12,7 @@ export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
-        <body
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "8vh",
-            overflow: "hidden",
-          }}
-          className={inter.className}
-        >
+        <body className={inter.className}>
           <div>{children}</div>
         </body>
       </html>
