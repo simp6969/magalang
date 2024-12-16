@@ -2,45 +2,113 @@
 @tailwind components;
 @tailwind utilities;
 
-body.dark {
+:root {
+  --primary-color: #e2cdbf;
+  --secondary-color: #c8a086;
+  --font-color: #fcfaf8;
+}
+
+body {
+  background-color: var(--primary-color);
+  color: var(--font-color);
   user-select: none;
-  color: #3a2f31;
-  background-image: url("../public/darkModePc.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position-x: left;
-}
-body.light {
-  background-image: url("../public/pcWallpaperHuTaoSimp.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
-.banner {
-  padding-right: 17px;
-  box-sizing: content-box;
-  overflow-y: scroll;
+.defaultHeader {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 38px;
+  color: var(--font-color);
+  text-align: center;
 }
 
-.button-16 {
-  height: 80px;
-  width: 160px;
-  font-size: 16px;
-  font-weight: 600;
+.landingPageDesign {
+  height: 100vh;
+  padding: 20px;
+  width: 100vw;
+  display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 10px;
-  border: 2px solid #3a2f31;
-  padding: 10px;
-  display: flex;
 }
 
-@media screen and (max-width: 500px) {
-  body.dark {
-    background-image: url("../public/darkmodeMobileDevice.jpg");
-    background-position-x: right;
+.cards {
+  background-color: var(--secondary-color);
+  color: var(--font-color);
+  display: flex;
+  width: 50%;
+  height: 60%;
+  border-radius: 30px;
+}
+
+.card {
+  display: flex !important;
+  gap: 30px;
+  align-items: center;
+}
+
+svg:hover {
+  cursor: pointer;
+}
+
+.gradTitle {
+  /* background: linear-gradient(to left, #c08e77, #8a4f44); */
+
+  color: #fcfaf8;
+
+  /* -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; */
+}
+
+.profile_image:hover {
+  position: relative;
+  scale: 1.1;
+}
+.profile_image {
+  transition-duration: 400ms;
+}
+.swiper-button {
+  display: flex;
+  position: absolute;
+  top: calc(50% - 12px);
+  z-index: 10;
+  cursor: pointer;
+}
+.image-swiper-button-prev {
+  left: 27%;
+}
+.image-swiper-button-next {
+  right: 27%;
+}
+.swiper-button-disabled {
+  opacity: 0.1;
+  pointer-events: none;
+}
+.popup {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #4a2e31;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.poppingOutAnimation {
+  animation: forwards 1000ms popAnimation;
+}
+
+@keyframes popAnimation {
+  0% {
+    opacity: -1;
+    transform: translateY(-40px);
   }
-  body.light {
-    background-image: url("../public/mobileWallpaperHuTaoSimp.jpg");
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
