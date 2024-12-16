@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+<<<<<<< HEAD
 :root {
   --primary-color: #e2cdbf;
   --secondary-color: #c8a086;
@@ -14,6 +15,12 @@ body {
   user-select: none;
   overflow-x: hidden;
   scroll-behavior: smooth;
+=======
+body {
+  user-select: none;
+  background: linear-gradient(to right, #f9e9da, #9d3e44);
+  color: #3a2f31;
+>>>>>>> parent of ec80353 (change theme)
 }
 
 .defaultHeader {
@@ -24,6 +31,7 @@ body {
   color: var(--font-color);
   text-align: center;
 }
+<<<<<<< HEAD
 
 .landingPageDesign {
   height: 100vh;
@@ -112,3 +120,5 @@ svg:hover {
     transform: translateY(0);
   }
 }
+=======
+>>>>>>> parent of ec80353 (change theme)

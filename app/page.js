@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -34,6 +35,12 @@ export default function LandingPage() {
     observer.observe(cardRef.current);
   }, []);
 
+=======
+import { MainHeader } from "./components/MainHeader";
+import { MainSolvingCards } from "./components/MainSolvingCards";
+
+export default function Play() {
+>>>>>>> parent of ec80353 (change theme)
   return (
     <>
       <div className="landingPageDesign">

@@ -7,6 +7,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
+<<<<<<< HEAD
     <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com"></link>
@@ -23,5 +24,22 @@ export default function RootLayout({ children }) {
 
       <body className={`HuTao`}>{children}</body>
     </html>
+=======
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "8vh",
+            overflow: "hidden",
+          }}
+          className={inter.className}
+        >
+          <div>{children}</div>
+        </body>
+      </html>
+    </ClerkProvider>
+>>>>>>> parent of ec80353 (change theme)
   );
 }
