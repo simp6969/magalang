@@ -18,9 +18,6 @@ export default function About() {
         <div className="text-[25px] flex gap-[10px] flex-col justify-center items-center">
           <h1>Game Rules</h1>
           <p className="abt">match the cards by clicking on them</p>
-          <p>About</p>
-          <p>customize:</p>
-          <p className="abt">warning: customized cards cannot have rank</p>
           <h1>Credits:</h1>
           <p className="abt">stoobid mf who lives in a trash can</p>
           <div className="abt">
