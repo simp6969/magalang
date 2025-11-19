@@ -38,3 +38,8 @@ next-env.d.ts
 .vercel
 
 .env.local
+# clerk configuration (can include secrets)
+/.clerk/
+
+/backend/node_modules
+/backend/.env
