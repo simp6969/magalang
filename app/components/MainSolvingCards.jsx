@@ -17,7 +17,7 @@ export function MainSolvingCards() {
   const [gameState, setGameState] = useState({
     paused: true,
     gameStarted: false,
-    dataFromStorage: null,
+    dataFromStorage: [],
     selectedCards: [],
     correctAnswers: [],
     selectedPath: [],
@@ -38,7 +38,7 @@ export function MainSolvingCards() {
   useEffect(() => {
     let intervalId;
 
-    if (gameState.gameStarted) {
+    if (gameState.paused && gameState.dataFromStorage.length == 12) {
       intervalId = setInterval(() => {
         setGameState((prev) => ({
           ...prev,
@@ -61,7 +61,7 @@ export function MainSolvingCards() {
         }));
         console.log("current seconds" + gameState.currentSeconds);
         if (user?.id) {
-          await fetch("http://localhost:8000" + "/score", {
+          await fetch("https://backend-alpha-hazel-23.vercel.app" + "/score", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -113,12 +113,12 @@ export function MainSolvingCards() {
       }
     }
   }
-
+  console.log(gameState);
   // Render the game
   return (
-    <div className="w-[100%] h-[100%] flex justify-center items-center">
+    <div className="w-[100%] h-[100%] flex justify-center items-center flex-col gap-[30px] max-sm:gap-[10px]">
       <ClerkLoading>
-        <div className="">loading</div>
+        <div className="">loading...</div>
       </ClerkLoading>
       <ClerkLoaded>
         <div
@@ -130,21 +130,7 @@ export function MainSolvingCards() {
           <div
             className="h-[45px] w-[45px] hover:cursor-pointer"
             title="settings"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 512 512"
-              onClick={() => router.push("/settings")}
-            >
-              <path
-                height={30}
-                width={30}
-                fill="#212121"
-                d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"
-              />
-            </svg>
-          </div>
-          {user ? <p></p> : <p>Guest</p>}
+          ></div>
           <SignedIn>
             <UserButton />
           </SignedIn>
@@ -157,70 +143,30 @@ export function MainSolvingCards() {
             gameState?.MenuPaused
               ? {
                   display: "flex",
-                  position: "absolute",
                   justifyContent: "center",
                   alignItems: "center",
                   zIndex: "2",
                   flexDirection: "column",
-                  height: "100%",
+                  height: "40px",
                 }
-              : { display: "none" }
+              : { height: "40px", opacity: "0" }
           }
-          className="card-container "
         >
-          <div className="flex justify-end h-[20px] w-[100%]"></div>
-          <h1 className="text-[30px] font-semibold text-[#3a2f31]">
-            Magalang Project
+          <h1 className="text-[45px] max-sm:text-[35px] font-bold text-[var(--ht-accent)]">
+            Magalang
           </h1>
-          <div className="flex gap-[10px]">
-            <button
-              title="Play"
-              onClick={() => {
-                setGameState((prev) => ({
-                  ...prev,
-                  MenuPaused: false,
-                }));
-                setTimeout(() => {
-                  setGameState((prev) => ({
-                    ...prev,
-                    gameStarted: true,
-                    paused: false,
-                  }));
-                }, 3000);
-              }}
-              className="primaryButton"
-            >
-              <p>play</p>
-            </button>
-            <button
-              title="about"
-              onClick={() => {
-                router.push("/about");
-              }}
-              className="primaryButton"
-            >
-              <p>about</p>
-            </button>
-          </div>
         </div>
-        <div
-          className="card-container"
-          style={
-            gameState.MenuPaused
-              ? { filter: "blur(50px)", position: "absolute", zIndex: "1" }
-              : {}
-          }
-        >
+        <div className="card-container max-sm:w-[auto] max-md:w-[700px] max-lg:w-[800px] w-[1000px]">
           {gameState?.dataFromStorage?.map((e) => {
             return (
               <div
                 className="responsiveCard"
                 style={
-                  !gameState.gameStarted ||
-                  gameState.selectedCards.includes(e.id) ||
-                  gameState.correctAnswers.includes(e.id)
-                    ? { transform: "rotateY(0deg)" }
-                    : { transform: "rotateY(180deg)" }
+                  !gameState.gameStarted &&
+                  !gameState.selectedCards.includes(e.id) &&
+                  !gameState.correctAnswers.includes(e.id)
+                    ? { transform: "rotateY(180deg)" }
+                    : { transform: "rotateY(0deg)" }
                 }
                 key={e.id}
               >
@@ -235,6 +181,7 @@ export function MainSolvingCards() {
                   draggable="false"
                   sizes="150px 260px"
                   onClick={() => {
+                    if (gameState.MenuPaused) return;
                     handleHiddenImage(e.id, e.path);
                   }}
                 />
@@ -252,6 +199,41 @@ export function MainSolvingCards() {
               </div>
             );
           })}
+        </div>
+        <div className={gameState.MenuPaused ? "flex gap-[10px]" : "opacity-0"}>
+          <button
+            title="Play"
+            onClick={() => {
+              setGameState((prev) => ({
+                ...prev,
+                MenuPaused: false,
+              }));
+              setTimeout(() => {
+                setGameState((prev) => ({
+                  ...prev,
+                  gameStarted: false,
+                  paused: true,
+                }));
+              }, 3000);
+              setGameState((prev) => ({
+                ...prev,
+                gameStarted: true,
+                paused: false,
+              }));
+            }}
+            className="primaryButton"
+          >
+            <p>play</p>
+          </button>
+          <button
+            title="about"
+            onClick={() => {
+              router.push("/about");
+            }}
+            className="primaryButton"
+          >
+            <p>about</p>
+          </button>
         </div>
       </ClerkLoaded>
     </div>

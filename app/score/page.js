@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import "./style.css";
 import { useUser } from "@clerk/nextjs";
 
 export default function Result() {
@@ -26,10 +25,12 @@ export default function Result() {
     );
   }
   return (
-    <div className="flex justify-center items-center h-screen w-screen overflow-hidden flex-col gap-[20px]">
-      <h1 className="font-bold text-[30px]">leaderboard</h1>
+    <div className="flex text-[var(--ht-text)] justify-center items-center h-screen w-screen overflow-hidden flex-col gap-[20px]">
+      <h1 className="font-bold text-[30px] text-[var(--ht-accent)]">
+        LEADERBOARD
+      </h1>
       <div className="flex border-[2.5px] justify-center rounded-[10px] max-h-80 h-[40vh] p-[20px] gap-[20px] border-[#20151A] items-center flex-col">
-        <div className="flex flex-row gap-[20px]">
+        <div className="flex flex-row gap-[20px] font-bold">
           <p>place</p>
           <p>lastname</p>
           <p>score(sec)</p>
@@ -45,16 +46,16 @@ export default function Result() {
           );
         })}
       </div>
-      <button className="button-16" onClick={() => router.push("/")}>
-        <p>main menu</p>
-        <svg
+      <button className="primaryButton" onClick={() => router.push("/")}>
+        <p>return</p>
+        {/* <svg
           width={50}
           height={50}
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 448 512"
         >
           <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
-        </svg>
+        </svg> */}
       </button>
     </div>
   );

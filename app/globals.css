@@ -2,45 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
-body.dark {
+:root {
+  --ht-accent: #7d1000; /* Crimson Maroon */
+  --ht-bg: #f0c2ab; /* Off-White/Cream */
+  --ht-text: #1f1d1b; /* Charcoal */
+}
+
+/* Default to modern elegant light theme */
+body {
   user-select: none;
-  color: #3a2f31;
-  background-image: url("../public/darkModePc.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position-x: left;
+  color: var(--ht-text);
+  background-color: var(--ht-bg);
+  background-image: none;
+  overflow: hidden;
 }
-body.light {
-  background-image: url("../public/pcWallpaperHuTaoSimp.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
+
+/* Optional dark variant retains previous wallpaper behavior */
+body.dark {
+  color: #eae7e3;
 }
+
+/* Utility styles for modern neumorphism */
+.elevated {
+  background: var(--ht-bg);
+  border-radius: 14px;
+}
+
+.border-accent {
+  border: 2px solid var(--ht-accent);
+}
+
+.text-accent {
+  color: var(--ht-accent);
+}
+.bg-accent {
+  background-color: var(--ht-accent);
+}
+
+/* .button-16 {
+  height: 48px;
+  min-width: 160px;
+  font-size: 16px;
+  font-weight: 700;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  border: none;
+  color: #fff;
+  padding: 12px 18px;
+  display: inline-flex;
+  gap: 8px;
+  background-color: var(--ht-accent);
+  transition: transform 180ms ease, 180ms ease, opacity 180ms ease;
+} */
+/* .button-16:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+.button-16:active {
+  transform: translateY(0);
+  opacity: 0.9;
+} */
 
 .banner {
   padding-right: 17px;
   box-sizing: content-box;
-  overflow-y: scroll;
 }
 
-.button-16 {
-  height: 80px;
-  width: 160px;
-  font-size: 16px;
-  font-weight: 600;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  border: 2px solid #3a2f31;
-  padding: 10px;
-  display: flex;
+.primaryButton {
+  border-radius: 12px;
+  padding: 15px;
+  width: 100px;
+  transition: 180ms ease;
+  text-align: center;
+  font-weight: 700;
+  color: var(--ht-bg);
+  background-color: var(--ht-accent);
 }
 
-@media screen and (max-width: 500px) {
-  body.dark {
-    background-image: url("../public/darkmodeMobileDevice.jpg");
-    background-position-x: right;
-  }
-  body.light {
-    background-image: url("../public/mobileWallpaperHuTaoSimp.jpg");
-  }
+.primaryButton:hover {
+  cursor: pointer;
+  scale: 1.02;
 }
