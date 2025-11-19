@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const munguRuZalga = require("./munguMnyMuAnd/mungu");
+const munguRuZalga = require("./munguMnyMuAnd/mungu.js")
 const model = require("./munguMnyMuAnd/helber.js");
 
 const app = express();

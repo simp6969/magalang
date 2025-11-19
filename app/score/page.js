@@ -11,7 +11,7 @@ export default function Result() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch("http://localhost:8000/score")
+    fetch("https://backend-alpha-hazel-23.vercel.app/score")
       .then((res) => res.json())
       .then((data) => {
         setMain(data);
