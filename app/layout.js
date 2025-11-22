@@ -15,6 +15,7 @@ export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
+        <meta name="viewport" content= "width=device-width, user-scalable=no"></meta>
         <body className={poppins.className}>
           <div>{children}</div>
         </body>

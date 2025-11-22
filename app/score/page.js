@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 
 export default function Result() {
   const { user } = useUser();
   const [main, setMain] = useState([]);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const score = searchParams.get("score");
 
   useEffect(() => {
     fetch("https://backend-alpha-hazel-23.vercel.app/score")
@@ -29,7 +31,16 @@ export default function Result() {
       <h1 className="font-bold text-[30px] text-[var(--ht-accent)]">
         LEADERBOARD
       </h1>
-      <div className="flex border-[2.5px] justify-center rounded-[10px] max-h-80 h-[40vh] p-[20px] gap-[20px] border-[#20151A] items-center flex-col">
+      
+      {score && (
+        <div className="bg-[var(--ht-accent)] text-white px-6 py-3 rounded-xl shadow-lg animate-bounce">
+          <p className="text-xl font-bold">
+            Your Time: {score} seconds
+          </p>
+        </div>
+      )}
+
+      <div className="flex border-[2.5px] justify-center rounded-[10px] max-h-80 h-[40vh] p-[20px] gap-[20px] border-[#20151A] items-center flex-col bg-white/50 backdrop-blur-sm">
         <div className="flex flex-row gap-[20px] font-bold">
           <p>place</p>
           <p>lastname</p>
@@ -41,21 +52,13 @@ export default function Result() {
             <div key={index} className="flex w-[100%] justify-around">
               <p>{index + 1}</p>
               <p className="w-[50%] text-center">{e.lastname}</p>
-              <p>{e.score}</p>
+              <p>{e.score} s</p>
             </div>
           );
         })}
       </div>
       <button className="primaryButton" onClick={() => router.push("/")}>
         <p>return</p>
-        {/* <svg
-          width={50}
-          height={50}
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 448 512"
-        >
-          <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
-        </svg> */}
       </button>
     </div>
   );

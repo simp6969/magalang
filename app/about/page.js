@@ -12,8 +12,20 @@ export default function About() {
         textAlign: "center",
         padding: "20px",
       }}
-      className="h-[100vh] w-[100vw] text-[var(--ht-text)]  flex items-center justify-center "
+      className="h-[100vh] w-[100vw] text-[var(--ht-text)]  flex items-center justify-center relative overflow-hidden"
     >
+      {/* Header */}
+      <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-center z-50">
+        <h1 className="text-3xl font-bold text-[var(--ht-accent)] tracking-tight drop-shadow-sm">
+          Magalang
+        </h1>
+      </div>
+
+      {/* Background Decoration */}
+      <div className="absolute inset-0 pointer-events-none opacity-20">
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--ht-accent)]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-orange-300 blur-[60px]" />
+      </div>
       <div className="backdrop-blur-xl p-[10px] rounded-[20px]">
         <div className="text-[25px] flex gap-[10px] flex-col justify-center items-center">
           <h1>Game Rules</h1>

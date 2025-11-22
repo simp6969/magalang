@@ -12,11 +12,18 @@ import Image from "next/image";
 import { PhotoStorageController } from "./PhotoStorageController";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
 
 export function MainSolvingCards() {
   const [gameState, setGameState] = useState({
-    paused: true,
-    gameStarted: false,
+    isPlaying: false, // Timer is running, user can play
+    isPreview: false, // Initial 3s reveal
     dataFromStorage: [],
     selectedCards: [],
     correctAnswers: [],
@@ -34,11 +41,12 @@ export function MainSolvingCards() {
       dataFromStorage: PhotoStorageController(),
     }));
   }, []);
+
   // Timer Management
   useEffect(() => {
     let intervalId;
 
-    if (gameState.paused && gameState.dataFromStorage.length == 12) {
+    if (gameState.isPlaying && !gameState.MenuPaused && gameState.dataFromStorage.length === 12) {
       intervalId = setInterval(() => {
         setGameState((prev) => ({
           ...prev,
@@ -47,17 +55,16 @@ export function MainSolvingCards() {
       }, 1000);
     }
 
-    // Cleanup function to clear the interval
     return () => clearInterval(intervalId);
-  }, [gameState.gameStarted]);
+  }, [gameState.isPlaying, gameState.MenuPaused, gameState.dataFromStorage.length]);
 
   // Handle game completion
   useEffect(() => {
     async function run() {
-      if (gameState.correctAnswers.length === 12) {
+      if (gameState.correctAnswers.length === 12 && gameState.correctAnswers.length > 0) {
         setGameState((prev) => ({
           ...prev,
-          gameStarted: false,
+          isPlaying: false,
         }));
         console.log("current seconds" + gameState.currentSeconds);
         if (user?.id) {
@@ -80,9 +87,25 @@ export function MainSolvingCards() {
       }
     }
     run();
-  }, [gameState.correctAnswers]);
+  }, [gameState.correctAnswers, gameState.currentSeconds, router, user]);
 
   function handleHiddenImage(id, path) {
+    // Prevent clicking if:
+    // 1. Menu is paused
+    // 2. Game is NOT playing (e.g. during preview)
+    // 3. Already 2 cards selected
+    // 4. Card is already selected
+    // 5. Card is already matched
+    if (
+      gameState.MenuPaused ||
+      !gameState.isPlaying ||
+      gameState.selectedCards.length >= 2 ||
+      gameState.selectedCards.includes(id) ||
+      gameState.correctAnswers.includes(id)
+    ) {
+      return;
+    }
+
     setGameState((prev) => ({
       ...prev,
       selectedCards: [...prev.selectedCards, id],
@@ -94,6 +117,7 @@ export function MainSolvingCards() {
         gameState.selectedPath[0] === path &&
         gameState.selectedCards[0] !== id
       ) {
+        // Match found
         setTimeout(() => {
           setGameState((prev) => ({
             ...prev,
@@ -101,140 +125,202 @@ export function MainSolvingCards() {
             selectedCards: [],
             selectedPath: [],
           }));
-        }, 300);
+        }, 500);
       } else {
+        // No match
         setTimeout(() => {
           setGameState((prev) => ({
             ...prev,
             selectedCards: [],
             selectedPath: [],
           }));
-        }, 300);
+        }, 1000);
       }
     }
   }
-  console.log(gameState);
-  // Render the game
+
   return (
-    <div className="w-[100%] h-[100%] flex justify-center items-center flex-col gap-[30px] max-sm:gap-[10px]">
+    <div className="w-full h-full min-h-screen bg-[var(--ht-bg)] flex flex-col items-center justify-center relative overflow-hidden">
+      {/* Background Decoration - Reduced blur for performance */}
+      <div className="absolute inset-0 pointer-events-none opacity-20">
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--ht-accent)] " />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-orange-300 blur-[60px]" />
+      </div>
+
       <ClerkLoading>
-        <div className="">loading...</div>
-      </ClerkLoading>
-      <ClerkLoaded>
-        <div
-          className="absolute top-[10px] right-[20px] flex-row gap-[10px] text-[#3a2f31] justify-center items-center"
-          style={{
-            display: gameState?.MenuPaused ? "flex" : "none",
-          }}
-        >
-          <div
-            className="h-[45px] w-[45px] hover:cursor-pointer"
-            title="settings"
-          ></div>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-          <SignedOut>
-            <SignInButton className="text-[#3a2f31] font-semibold text-[18px] mr-[10px]" />
-          </SignedOut>
+        <div className="flex items-center justify-center h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--ht-accent)]"></div>
         </div>
-        <div
-          style={
-            gameState?.MenuPaused
-              ? {
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  zIndex: "2",
-                  flexDirection: "column",
-                  height: "40px",
-                }
-              : { height: "40px", opacity: "0" }
-          }
-        >
-          <h1 className="text-[45px] max-sm:text-[35px] font-bold text-[var(--ht-accent)]">
+      </ClerkLoading>
+
+      <ClerkLoaded>
+        {/* Header / Top Bar */}
+        <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-center z-50">
+          <h1 className="text-3xl font-bold text-[var(--ht-accent)] tracking-tight">
             Magalang
           </h1>
-        </div>
-        <div className="card-container max-sm:w-[auto] max-md:w-[700px] max-lg:w-[800px] w-[1000px]">
-          {gameState?.dataFromStorage?.map((e) => {
-            return (
-              <div
-                className="responsiveCard"
-                style={
-                  !gameState.gameStarted &&
-                  !gameState.selectedCards.includes(e.id) &&
-                  !gameState.correctAnswers.includes(e.id)
-                    ? { transform: "rotateY(180deg)" }
-                    : { transform: "rotateY(0deg)" }
-                }
-                key={e.id}
-              >
-                <Image
-                  src={"/cards/cardBack.jpg"}
-                  alt="guess the photo"
-                  className=" cardBack duration-[200ms]"
-                  fill
-                  priority
-                  quality={90}
-                  objectFit="cover"
-                  draggable="false"
-                  sizes="150px 260px"
-                  onClick={() => {
-                    if (gameState.MenuPaused) return;
-                    handleHiddenImage(e.id, e.path);
-                  }}
-                />
-                <Image
-                  src={e.path}
-                  alt="guess the photo"
-                  className=" cardFront"
-                  fill
-                  priority
-                  quality={90}
-                  objectFit="cover"
-                  draggable="false"
-                  sizes="150px 260px"
-                />
+          
+          <div className="flex items-center gap-4">
+             {/* Timer Display */}
+             {!gameState.MenuPaused && (
+              <div className="bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full font-mono font-bold text-[var(--ht-accent)] shadow-sm border border-[var(--ht-accent)]/20">
+                {new Date(gameState.currentSeconds * 1000).toISOString().substr(14, 5)}
               </div>
-            );
-          })}
+            )}
+
+            <div className="flex items-center gap-2">
+               <SignedIn>
+                <UserButton afterSignOutUrl="/"/>
+              </SignedIn>
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button className="px-4 py-2 rounded-full bg-[var(--ht-accent)] text-white font-semibold hover:opacity-90 transition-opacity text-sm">
+                    Sign In
+                  </button>
+                </SignInButton>
+              </SignedOut>
+            </div>
+          </div>
         </div>
-        <div className={gameState.MenuPaused ? "flex gap-[10px]" : "opacity-0"}>
-          <button
-            title="Play"
-            onClick={() => {
-              setGameState((prev) => ({
-                ...prev,
-                MenuPaused: false,
-              }));
-              setTimeout(() => {
-                setGameState((prev) => ({
-                  ...prev,
-                  gameStarted: false,
-                  paused: true,
-                }));
-              }, 3000);
-              setGameState((prev) => ({
-                ...prev,
-                gameStarted: true,
-                paused: false,
-              }));
-            }}
-            className="primaryButton"
-          >
-            <p>play</p>
-          </button>
-          <button
-            title="about"
-            onClick={() => {
-              router.push("/about");
-            }}
-            className="primaryButton"
-          >
-            <p>about</p>
-          </button>
-        </div>
+
+        {/* Game Grid */}
+        <AnimatePresence mode="wait">
+          {!gameState.MenuPaused && (
+            <motion.div
+              key="game-grid"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              className="z-10 grid grid-cols-3 md:grid-cols-4 gap-3 p-4 max-w-4xl w-full"
+            >
+              {gameState.dataFromStorage.map((card) => {
+                const isFlipped = 
+                  gameState.isPreview ||
+                  gameState.selectedCards.includes(card.id) || 
+                  gameState.correctAnswers.includes(card.id);
+                
+                const isMatched = gameState.correctAnswers.includes(card.id);
+
+                return (
+                  <div
+                    key={card.id}
+                    className="relative aspect-[3/4] perspective-1000 cursor-pointer group"
+                    onClick={() => handleHiddenImage(card.id, card.path)}
+                  >
+                    <motion.div
+                      className="w-full h-full relative preserve-3d"
+                      initial={false}
+                      animate={{ 
+                        rotateY: isFlipped ? 180 : 0,
+                      }}
+                      transition={{ 
+                        type: "spring", 
+                        stiffness: 300, 
+                        damping: 30,
+                        mass: 0.8
+                      }}
+                    >
+                      {/* Front (Card Back Design) */}
+                      <div className="absolute inset-0 w-full h-full backface-hidden rounded-xl overflow-hidden shadow-md bg-white">
+                        <Image
+                          src="/cards/cardBack.jpg"
+                          alt="Card Back"
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 33vw, 25vw"
+                          priority
+                        />
+                      </div>
+
+                      {/* Back (Actual Image) */}
+                      <div 
+                        className={cn(
+                          "absolute inset-0 w-full h-full backface-hidden rounded-xl overflow-hidden shadow-md rotate-y-180 bg-white",
+                          isMatched ? "ring-4 ring-green-500/50" : ""
+                        )}
+                      >
+                        <Image
+                          src={card.path}
+                          alt="Card Front"
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 33vw, 25vw"
+                        />
+                        {isMatched && (
+                          <div className="absolute inset-0 bg-green-500/10 flex items-center justify-center">
+                            <div className="bg-white/90 rounded-full p-1 shadow-sm">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  </div>
+                );
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Menu Overlay */}
+        <AnimatePresence>
+          {gameState.MenuPaused && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-[var(--ht-bg)]/95 backdrop-blur-sm"
+            >
+              <div className="text-center space-y-8 p-8">
+                <h2 className="text-5xl md:text-7xl font-extrabold text-[var(--ht-accent)] tracking-tighter drop-shadow-sm">
+                  Magalang
+                </h2>
+                <p className="text-lg text-[var(--ht-text)]/80 max-w-md mx-auto font-medium">
+                  Test your memory. Match the cards to win!
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
+                  <button
+                    onClick={() => {
+                      // Reset game state and start preview
+                      setGameState(prev => ({
+                        ...prev,
+                        MenuPaused: false,
+                        isPlaying: false,
+                        isPreview: true,
+                        currentSeconds: 0,
+                        selectedCards: [],
+                        selectedPath: [],
+                        correctAnswers: []
+                      }));
+
+                      // End preview after 3 seconds
+                      setTimeout(() => {
+                        setGameState(prev => ({
+                          ...prev,
+                          isPreview: false,
+                          isPlaying: true
+                        }));
+                      }, 3000);
+                    }}
+                    className="px-8 py-4 bg-[var(--ht-accent)] text-white text-xl font-bold rounded-2xl shadow-lg shadow-[var(--ht-accent)]/30 hover:shadow-xl hover:shadow-[var(--ht-accent)]/40 transition-all min-w-[200px] hover:scale-105 active:scale-95"
+                  >
+                    Play Now
+                  </button>
+                  
+                  <button
+                    onClick={() => router.push("/about")}
+                    className="px-8 py-4 bg-white text-[var(--ht-text)] text-xl font-bold rounded-2xl shadow-md hover:shadow-lg transition-all min-w-[200px] border-2 border-transparent hover:border-[var(--ht-accent)]/10 hover:scale-105 active:scale-95"
+                  >
+                    About
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </ClerkLoaded>
     </div>
   );
