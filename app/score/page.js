@@ -31,25 +31,26 @@ export default function Result() {
       <h1 className="font-bold text-[30px] text-[var(--ht-accent)]">
         LEADERBOARD
       </h1>
-      
+
       {score && (
         <div className="bg-[var(--ht-accent)] text-white px-6 py-3 rounded-xl shadow-lg animate-bounce">
-          <p className="text-xl font-bold">
-            Your Time: {score} seconds
-          </p>
+          <p className="text-xl font-bold">Your Time: {score} seconds</p>
         </div>
       )}
+      <div className="flex flex-row gap-[20px] w-[300px] justify-center font-bold">
+        <p>place</p>
+        <p>lastname</p>
+        <p>score(sec)</p>
+      </div>
+      <div className="w-[80%] sm-[300px]:w-[30%] border-b-[100%] border-black border-[1px] rounded-[10px]"></div>
 
-      <div className="flex border-[2.5px] justify-center rounded-[10px] max-h-80 h-[40vh] p-[20px] gap-[20px] border-[#20151A] items-center flex-col bg-white/50 backdrop-blur-sm">
-        <div className="flex flex-row gap-[20px] font-bold">
-          <p>place</p>
-          <p>lastname</p>
-          <p>score(sec)</p>
-        </div>
-        <div className="w-[70%] border-b-[100%] border-black border-[1px] rounded-[10px]"></div>
+      <div className="flex w-[300px] overflow-hidden border-[2.5px] justify-center rounded-[10px] max-h-80 h-[40vh] p-[20px] gap-[20px] border-[#20151A] items-center flex-col bg-white/50 backdrop-blur-sm">
         {main.map((e, index) => {
           return (
-            <div key={index} className="flex w-[100%] justify-around">
+            <div
+              key={index}
+              className="flex box-content w-[100%] justify-around"
+            >
               <p>{index + 1}</p>
               <p className="w-[50%] text-center">{e.lastname}</p>
               <p>{e.score} s</p>
