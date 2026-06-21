@@ -5,15 +5,7 @@ import { useRouter } from "next/navigation";
 export default function About() {
   const router = useRouter();
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        textAlign: "center",
-        padding: "20px",
-      }}
-      className="h-[100vh] w-[100vw] text-[var(--ht-text)]  flex items-center justify-center relative overflow-hidden"
-    >
+    <div className="h-screen w-screen text-[var(--ht-text)] flex flex-col items-center justify-center relative overflow-hidden p-5 text-center">
       {/* Header */}
       <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-center z-50">
         <h1 className="text-3xl font-bold text-[var(--ht-accent)] tracking-tight drop-shadow-sm">
@@ -21,71 +13,44 @@ export default function About() {
         </h1>
       </div>
 
-      {/* Background Decoration */}
+      {/* Background */}
       <div className="absolute inset-0 pointer-events-none opacity-20">
         <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[var(--ht-accent)]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-orange-300 blur-[60px]" />
       </div>
-      <div className="backdrop-blur-xl p-[10px] rounded-[20px]">
-        <div className="text-[25px] flex gap-[10px] flex-col justify-center items-center">
-          <h1>Game Rules</h1>
-          <p className="abt">match the cards by clicking on them</p>
-          <h1>Credits:</h1>
-          <p className="abt">stoobid mf who lives in a trash can</p>
-          <div className="abt">
+
+      <div className="backdrop-blur-xl p-4 rounded-2xl">
+        <div className="text-[25px] flex gap-3 flex-col justify-center items-center">
+          <h2 className="font-bold">Game Rules</h2>
+          <p>match the cards by clicking on them</p>
+          <h2 className="font-bold">Credits:</h2>
+          <p>stoobid mf who lives in a trash can</p>
+          <div>
             msexpensive discord:{" "}
-            <button
-              className="text-[var(--ht-accent)]"
-              onClick={() => {
-                navigator.clipboard.writeText("expensiveixia_72613");
-              }}
-            >
+            <button className="text-[var(--ht-accent)]" onClick={() => navigator.clipboard.writeText("expensiveixia_72613")}>
               expensiveixia_72613
             </button>
           </div>
-          <div className="abt">
+          <div>
             yumi discord:{" "}
-            <button
-              className="text-[var(--ht-accent)]"
-              onClick={() => {
-                navigator.clipboard.writeText("yumixchu#1129");
-              }}
-            >
+            <button className="text-[var(--ht-accent)]" onClick={() => navigator.clipboard.writeText("yumixchu#1129")}>
               yumixchu#1129
             </button>
           </div>
-          <div className="abt">
+          <div>
             RayReii discord:{" "}
-            <button
-              className="text-[var(--ht-accent)]"
-              onClick={() => {
-                navigator.clipboard.writeText("Reii#7498");
-              }}
-            >
+            <button className="text-[var(--ht-accent)]" onClick={() => navigator.clipboard.writeText("Reii#7498")}>
               Reii#7498
             </button>
           </div>
-          <div className="abt">
+          <div>
             Coffee discord:{" "}
-            <button
-              className="text-[var(--ht-accent)]"
-              onClick={() => {
-                navigator.clipboard.writeText("Coffingo#2403");
-              }}
-            >
+            <button className="text-[var(--ht-accent)]" onClick={() => navigator.clipboard.writeText("Coffingo#2403")}>
               Coffingo#2403
             </button>
           </div>
           <button onClick={() => router.push("/")} className="primaryButton">
-            <p>return</p>
-            {/* <svg
-              width={50}
-              height={50}
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 448 512"
-            >
-              <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
-            </svg> */}
+            return
           </button>
         </div>
       </div>
