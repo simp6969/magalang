@@ -2,36 +2,212 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─────────────────────────────────────────────
+   Design Tokens — Dark Anime Aesthetic
+───────────────────────────────────────────── */
 :root {
-  --ht-accent: #7d1000;
-  --ht-bg: #f0c2ab;
-  --ht-text: #1f1d1b;
+  --bg:           #08080f;
+  --bg-surface:   #0e0e1c;
+  --bg-glass:     rgba(255, 255, 255, 0.05);
+  --bg-glass-hover: rgba(255, 255, 255, 0.09);
+
+  --accent-rose:  #d6437a;
+  --accent-violet:#8b5cf6;
+  --accent-glow:  #c1457a;
+
+  --text:         #f0eaf5;
+  --text-muted:   rgba(240, 234, 245, 0.55);
+
+  --border:       rgba(255, 255, 255, 0.1);
+  --border-glow:  rgba(214, 67, 122, 0.4);
+
+  --match-glow:   #a78bfa;
+  --gold:         #f5c518;
+  --silver:       #b0b0c8;
+  --bronze:       #cd7f32;
+}
+
+/* ─────────────────────────────────────────────
+   Base Reset
+───────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   user-select: none;
-  color: var(--ht-text);
-  background-color: var(--ht-bg);
+  color: var(--text);
+  background-color: var(--bg);
+  /* overflow managed per-page — not globally locked */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Game page wrapper */
+.game-root {
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* respect notches / home bar on iOS */
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* ─────────────────────────────────────────────
+   Scrollbar
+───────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent-rose);
+  border-radius: 99px;
+}
+
+/* ─────────────────────────────────────────────
+   Glass Panels
+───────────────────────────────────────────── */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.glass-hover:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--border-glow);
+}
+
+/* ─────────────────────────────────────────────
+   Gradient Text
+───────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent-rose) 0%, var(--accent-violet) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ─────────────────────────────────────────────
+   Glow Utilities
+───────────────────────────────────────────── */
+.glow-rose {
+  box-shadow: 0 0 20px rgba(214, 67, 122, 0.5), 0 0 60px rgba(214, 67, 122, 0.15);
+}
+.glow-violet {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5), 0 0 60px rgba(139, 92, 246, 0.15);
+}
+.glow-match {
+  box-shadow: 0 0 0 3px var(--match-glow), 0 0 20px rgba(167, 139, 250, 0.6);
+}
+
+/* ─────────────────────────────────────────────
+   Primary CTA Button
+───────────────────────────────────────────── */
+.btn-primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-rose), var(--accent-violet));
+  border: none;
+  cursor: pointer;
+  transition: all 180ms ease;
+  box-shadow: 0 4px 24px rgba(214, 67, 122, 0.35);
   overflow: hidden;
 }
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 32px rgba(214, 67, 122, 0.5);
+}
+.btn-primary:hover::before { opacity: 1; }
+.btn-primary:active {
+  transform: translateY(0) scale(0.97);
+}
 
-/* Primary CTA button */
-.primaryButton {
-  border-radius: 12px;
-  padding: 15px;
-  width: 100px;
-  transition: 180ms ease;
-  text-align: center;
+/* Secondary outline button */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  border-radius: 14px;
   font-weight: 700;
-  color: var(--ht-bg);
-  background-color: var(--ht-accent);
-}
-.primaryButton:hover {
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
   cursor: pointer;
-  scale: 1.02;
+  transition: all 180ms ease;
+  backdrop-filter: blur(8px);
+}
+.btn-secondary:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--border-glow);
+  transform: translateY(-2px) scale(1.02);
+}
+.btn-secondary:active { transform: scale(0.97); }
+
+/* ─────────────────────────────────────────────
+   Rank Badges
+───────────────────────────────────────────── */
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+.rank-1 {
+  background: linear-gradient(135deg, #f5c518, #ff9f43);
+  color: #1a0a00;
+  box-shadow: 0 0 12px rgba(245,197,24,0.6);
+}
+.rank-2 {
+  background: linear-gradient(135deg, #b0b0c8, #d0d0e0);
+  color: #1a1a2e;
+}
+.rank-3 {
+  background: linear-gradient(135deg, #cd7f32, #e8a87c);
+  color: #1a0a00;
+}
+.rank-other {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
 }
 
-/* 3D card transform utilities */
+/* ─────────────────────────────────────────────
+   3D Card Transform Utilities
+───────────────────────────────────────────── */
 .perspective-1000 {
   perspective: 1000px;
 }
@@ -40,13 +216,112 @@ body {
 }
 .backface-hidden {
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
 
-/* Clerk avatar override */
+/* ─────────────────────────────────────────────
+   Card Shimmer Animation
+───────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { transform: translateX(-100%) skewX(-12deg); }
+  100% { transform: translateX(200%) skewX(-12deg); }
+}
+.card-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
+  animation: shimmer 2.5s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────────
+   Match Overlay — CSS-only (no Framer overhead)
+───────────────────────────────────────────── */
+@keyframes matchFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes matchPop {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+/* ─────────────────────────────────────────────
+   Responsive Game Grid
+   Fills the viewport so cards never scroll on
+   any modern phone (375px+) or desktop.
+───────────────────────────────────────────── */
+.game-grid {
+  display: grid;
+  /* Mobile portrait: 3 cols, auto rows */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 100%;
+  max-width: 500px; /* clamp mobile width to prevent cards getting too huge */
+  padding: 8px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+@media (min-width: 480px) {
+  .game-grid {
+    /* Landscape / larger phones: 4 cols */
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 640px;
+    gap: 12px;
+    padding: 12px;
+  }
+}
+
+@media (min-width: 768px) {
+  .game-grid {
+    max-width: 800px;
+    gap: 16px;
+    padding: 16px;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Floating Orbs (background decoration)
+───────────────────────────────────────────── */
+@keyframes float-orb {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-30px) scale(1.05); }
+}
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  animation: float-orb 8s ease-in-out infinite;
+}
+.orb-rose   { background: radial-gradient(circle, rgba(214,67,122,0.4), transparent 70%); }
+.orb-violet { background: radial-gradient(circle, rgba(139,92,246,0.3), transparent 70%); }
+
+/* ─────────────────────────────────────────────
+   Clerk Avatar Override
+───────────────────────────────────────────── */
 .cl-avatarBox {
-  width: 50px;
-  height: 50px;
+  width: 38px;
+  height: 38px;
+}
+
+/* ─────────────────────────────────────────────
+   Timer Pill
+───────────────────────────────────────────── */
+.timer-pill {
+  font-family: 'Courier New', monospace;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  padding: 6px 16px;
+  border-radius: 99px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glow);
+  color: var(--accent-rose);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 12px rgba(214,67,122,0.3);
 }

@@ -12,13 +12,16 @@ function getDb() {
     _db.pragma("journal_mode = WAL");
     _db.exec(`
       CREATE TABLE IF NOT EXISTS scores (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userid TEXT NOT NULL UNIQUE,
-        firstname TEXT DEFAULT '',
-        lastname TEXT DEFAULT '',
-        score INTEGER NOT NULL,
-        created_at TEXT DEFAULT (datetime('now'))
-      )
+        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        userid      TEXT    NOT NULL UNIQUE,
+        firstname   TEXT    DEFAULT '',
+        lastname    TEXT    DEFAULT '',
+        score       INTEGER NOT NULL,
+        created_at  TEXT    DEFAULT (datetime('now')),
+        updated_at  TEXT    DEFAULT (datetime('now'))
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_scores_score ON scores (score ASC);
     `);
   }
   return _db;
