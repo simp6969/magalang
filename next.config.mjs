@@ -5,10 +5,7 @@ const nextConfig = {
     imageSizes: [128, 256],
     formats: ["image/avif", "image/webp"],
   },
-  experimental: {
-    // better-sqlite3 is a native Node module; must run server-side only
-    serverComponentsExternalPackages: ["better-sqlite3"],
-  },
+
 };
 
 export default nextConfig;

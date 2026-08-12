@@ -1,30 +1,39 @@
-import Database from "better-sqlite3";
-import path from "path";
+import { Pool } from "pg";
 
-// Store the DB file at project root (gitignored)
-const DB_PATH = path.join(process.cwd(), "magalang.db");
+import { parse } from "pg-connection-string";
 
-let _db;
+let pool;
 
-function getDb() {
-  if (!_db) {
-    _db = new Database(DB_PATH);
-    _db.pragma("journal_mode = WAL");
-    _db.exec(`
-      CREATE TABLE IF NOT EXISTS scores (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
-        userid      TEXT    NOT NULL UNIQUE,
-        firstname   TEXT    DEFAULT '',
-        lastname    TEXT    DEFAULT '',
-        score       INTEGER NOT NULL,
-        created_at  TEXT    DEFAULT (datetime('now')),
-        updated_at  TEXT    DEFAULT (datetime('now'))
-      );
-
-      CREATE INDEX IF NOT EXISTS idx_scores_score ON scores (score ASC);
-    `);
+export function getDb() {
+  if (!pool) {
+    // Supabase sets POSTGRES_URL in the .env.
+    // We parse it manually because the URL's ?sslmode=require
+    // overrides the rejectUnauthorized: false if passed to Pool directly.
+    const config = parse(process.env.POSTGRES_URL);
+    config.ssl = {
+      rejectUnauthorized: false
+    };
+    
+    pool = new Pool(config);
   }
-  return _db;
+  return pool;
+}
+
+export async function initDb() {
+  const db = getDb();
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS scores (
+      id          SERIAL PRIMARY KEY,
+      userid      TEXT    NOT NULL UNIQUE,
+      firstname   TEXT    DEFAULT '',
+      lastname    TEXT    DEFAULT '',
+      score       INTEGER NOT NULL,
+      created_at  TIMESTAMP DEFAULT NOW(),
+      updated_at  TIMESTAMP DEFAULT NOW()
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_scores_score ON scores (score ASC);
+  `);
 }
 
 export default getDb;
